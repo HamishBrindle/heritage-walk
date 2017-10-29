@@ -27,7 +27,9 @@ import heritagewalk.com.heritagewalk.maps.tasks.OnJSONParseCompleted;
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, OnJSONParseCompleted {
 
     private static final String TAG = "MapsActivity";
-    private static final float DEFAULT_ZOOM = 13.5f;
+    private static final float DEFAULT_ZOOM = 12.0f;
+    private static final float MIN_ZOOM = 10.0f;
+    private static final float MAX_ZOOM = 18.0f;
     private static final LatLng NEW_WEST = new LatLng(49.2057179, -122.910956);
     private static final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 200;
 
@@ -78,8 +80,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         // Setup the camera and it's boundaries.
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(NEW_WEST, DEFAULT_ZOOM));
-        mMap.setMinZoomPreference(13.0f);
-        mMap.setMaxZoomPreference(18.0f);
+        mMap.setMinZoomPreference(MIN_ZOOM);
+        mMap.setMaxZoomPreference(MAX_ZOOM);
 
         // We want to use clusters, so we need to set that up
         setUpClusterManager();

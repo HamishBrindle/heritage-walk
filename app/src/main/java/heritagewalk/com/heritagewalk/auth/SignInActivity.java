@@ -207,14 +207,9 @@ public class SignInActivity extends BaseActivity implements View.OnClickListener
     private void updateUI(FirebaseUser user) {
         hideProgressDialog();
         if (user != null) {
-            if (user.isEmailVerified()) {
-                Intent intent = new Intent(this, MainActivity.class);
-                startActivity(intent);
-                finish();
-            } else {
-                buildDialog("Email Verification", "In order to access Heritage Walk,"
-                + " please verify your email using the email you registered with and sign in again.");
-            }
+            Intent intent = new Intent(this, MainActivity.class);
+            startActivity(intent);
+            finish();
         } else {
             mStatusTextView.setText(R.string.signed_out);
             mDetailTextView.setText(null);
@@ -237,16 +232,8 @@ public class SignInActivity extends BaseActivity implements View.OnClickListener
         int i = v.getId();
         if (i == R.id.email_create_account_button) {
             createAccount(mEmailField.getText().toString(), mPasswordField.getText().toString());
-            if (!mEmailVerificationSent) {
-                sendEmailVerification();
-                mEmailVerificationSent = true;
-            }
         } else if (i == R.id.email_sign_in_button) {
             signIn(mEmailField.getText().toString(), mPasswordField.getText().toString());
-            if (!mEmailVerificationSent) {
-                sendEmailVerification();
-                mEmailVerificationSent = true;
-            }
         } else if (i == R.id.sign_out_button) {
             signOut();
         }
