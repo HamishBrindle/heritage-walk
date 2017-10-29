@@ -12,7 +12,7 @@ import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import heritagewalk.com.heritagewalk.maps.models.Site;
+import heritagewalk.com.heritagewalk.models.Site;
 
 /**
  * A simple JSON parsing class.

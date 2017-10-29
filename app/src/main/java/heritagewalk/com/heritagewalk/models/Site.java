@@ -1,4 +1,4 @@
-package heritagewalk.com.heritagewalk.maps.models;
+package heritagewalk.com.heritagewalk.models;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.google.maps.android.clustering.ClusterItem;

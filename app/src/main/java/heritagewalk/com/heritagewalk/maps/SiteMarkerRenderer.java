@@ -1,4 +1,4 @@
-package heritagewalk.com.heritagewalk.maps.models;
+package heritagewalk.com.heritagewalk.maps;
 
 import android.content.Context;
 
@@ -9,6 +9,8 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.maps.android.clustering.ClusterManager;
 import com.google.maps.android.clustering.view.DefaultClusterRenderer;
+
+import heritagewalk.com.heritagewalk.models.Site;
 
 /**
  * SiteMarkerRenderer defines the rendering of Site markers (icon, color, etc.).

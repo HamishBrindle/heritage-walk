@@ -1,6 +1,6 @@
 package heritagewalk.com.heritagewalk.maps.tasks;
 
-import heritagewalk.com.heritagewalk.maps.models.Site;
+import heritagewalk.com.heritagewalk.models.Site;
 
 /**
  * OnJSONParseCompleted interface for notifying UI of completed AsyncTask.

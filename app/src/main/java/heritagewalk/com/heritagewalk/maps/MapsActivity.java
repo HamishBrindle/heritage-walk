@@ -20,8 +20,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import heritagewalk.com.heritagewalk.R;
-import heritagewalk.com.heritagewalk.maps.models.Site;
-import heritagewalk.com.heritagewalk.maps.models.SiteMarkerRenderer;
+import heritagewalk.com.heritagewalk.models.Site;
 import heritagewalk.com.heritagewalk.maps.tasks.JSONParseAsyncTask;
 import heritagewalk.com.heritagewalk.maps.tasks.OnJSONParseCompleted;
 
