@@ -8,12 +8,16 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
+import com.google.maps.android.clustering.Cluster;
+import com.google.maps.android.clustering.ClusterItem;
 import com.google.maps.android.clustering.ClusterManager;
 
 import java.util.ArrayList;
@@ -24,7 +28,12 @@ import heritagewalk.com.heritagewalk.models.Site;
 import heritagewalk.com.heritagewalk.maps.tasks.JSONParseAsyncTask;
 import heritagewalk.com.heritagewalk.maps.tasks.OnJSONParseCompleted;
 
-public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, OnJSONParseCompleted {
+public class MapsActivity extends FragmentActivity
+        implements OnMapReadyCallback, OnJSONParseCompleted,
+        ClusterManager.OnClusterClickListener<Site>,
+        ClusterManager.OnClusterInfoWindowClickListener<Site>,
+        ClusterManager.OnClusterItemClickListener<Site>,
+        ClusterManager.OnClusterItemInfoWindowClickListener<Site> {
 
     private static final String TAG = "MapsActivity";
     private static final float DEFAULT_ZOOM = 12.0f;
@@ -66,6 +75,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void onMapReady(GoogleMap map) {
         mMap = map;
 
+        // Do all the map setup (Camera, permissions, etc.)
+        setUpMap();
+
+        // We want to use clusters, so we need to set that up
+        setUpClusterManager();
+    }
+
+    private void setUpMap() {
+
         // Check if user has given permissions to access location
         int permissionCheck = ContextCompat.checkSelfPermission(this,
                 Manifest.permission.ACCESS_FINE_LOCATION);
@@ -83,8 +101,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap.setMinZoomPreference(MIN_ZOOM);
         mMap.setMaxZoomPreference(MAX_ZOOM);
 
-        // We want to use clusters, so we need to set that up
-        setUpClusterManager();
     }
 
     private void getPermissions() {
@@ -152,6 +168,18 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         // Point the map's listeners at the listeners implemented by the cluster manager.
         mMap.setOnCameraIdleListener(mClusterManager);
         mMap.setOnMarkerClickListener(mClusterManager);
+        mMap.setInfoWindowAdapter(mClusterManager.getMarkerManager());
+        mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
+            @Override
+            public void onInfoWindowClick(Marker marker) {
+                Toast.makeText(MapsActivity.this, "Info Window", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        mClusterManager.setOnClusterClickListener(this);
+        mClusterManager.setOnClusterInfoWindowClickListener(this);
+        mClusterManager.setOnClusterItemClickListener(this);
+        mClusterManager.setOnClusterItemInfoWindowClickListener(this);
 
         // Add cluster items (markers) to the cluster manager.
         addItems();
@@ -165,11 +193,34 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             Log.e(TAG, "onMapReady: Adding markers to map");
             for (Site site :
                     mHeritageSites) {
-                mClusterManager.addItem(site);
+                if (!site.getDescription().isEmpty())
+                    mClusterManager.addItem(site);
             }
         } else {
             Log.e(TAG, "onMapReady: Sites array is null!");
         }
     }
+
+    @Override
+    public boolean onClusterItemClick(Site site) {
+        Toast.makeText(this, "Cluster CLick", Toast.LENGTH_SHORT).show();
+        return false;
+    }
+
+    @Override
+    public boolean onClusterClick(Cluster<Site> cluster) {
+        return false;
+    }
+
+    @Override
+    public void onClusterInfoWindowClick(Cluster<Site> cluster) {
+    }
+
+    @Override
+    public void onClusterItemInfoWindowClick(Site site) {
+        Toast.makeText(this, "Info Window", Toast.LENGTH_SHORT).show();
+    }
+
+
 
 }

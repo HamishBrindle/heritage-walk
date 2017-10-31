@@ -11,10 +11,10 @@ import com.google.maps.android.clustering.ClusterItem;
 
 public class Site implements ClusterItem {
 
-    private String name;
+    private String Name;
     private LatLng latLng;
     private String summary;
-    private String description;
+    private String Descriptn;
     private int id;
     private double X;
     private double Y;
@@ -34,11 +34,11 @@ public class Site implements ClusterItem {
     }
 
     public String getName() {
-        return name;
+        return Name;
     }
 
     public void setName(String name) {
-        this.name = name;
+        this.Name = name;
     }
 
     public String getSummary() {
@@ -50,11 +50,11 @@ public class Site implements ClusterItem {
     }
 
     public String getDescription() {
-        return description;
+        return Descriptn;
     }
 
     public void setDescription(String description) {
-        this.description = description;
+        this.Descriptn = description;
     }
 
     public int getId() {
@@ -72,12 +72,12 @@ public class Site implements ClusterItem {
 
     @Override
     public String getTitle() {
-        return name;
+        return Name;
     }
 
     @Override
     public String getSnippet() {
-        return description;
+        return Descriptn;
     }
 
 
