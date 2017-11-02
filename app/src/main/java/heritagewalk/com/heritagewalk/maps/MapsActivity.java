@@ -221,6 +221,4 @@ public class MapsActivity extends FragmentActivity
         Toast.makeText(this, "Info Window", Toast.LENGTH_SHORT).show();
     }
 
-
-
 }

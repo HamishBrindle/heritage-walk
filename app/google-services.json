@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "1097770957398",
+    "firebase_url": "https://heritagewalk-6c3ab.firebaseio.com",
+    "project_id": "heritagewalk-6c3ab",
+    "storage_bucket": "heritagewalk-6c3ab.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1097770957398:android:c56340ff253832e5",
+        "android_client_info": {
+          "package_name": "heritagewalk.com.heritagewalk"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1097770957398-1uv6dpe9jvp0hi1or6pt4ovorfn97mvt.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "heritagewalk.com.heritagewalk",
+            "certificate_hash": "a3748ba8851bc4969b073af05cabf9da159f27e6"
+          }
+        },
+        {
+          "client_id": "1097770957398-v7soi0311kvfb6of64d1qakcgv0ve3a5.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBI3riyX4nY5gcPx5gTQrTvGW6AUEkS7kE"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1097770957398-v7soi0311kvfb6of64d1qakcgv0ve3a5.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
