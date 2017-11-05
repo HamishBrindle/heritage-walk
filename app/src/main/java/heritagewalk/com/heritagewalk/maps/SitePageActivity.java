@@ -1,9 +1,9 @@
 package heritagewalk.com.heritagewalk.maps;
 
 
-//import com.google.android.gms.location.places.GeoDataClient;
-//import com.google.android.gms.location.places.Places;
-//import com.google.android.gms.location.places.PlaceDetectionClient;
+import com.google.android.gms.location.places.GeoDataClient;
+import com.google.android.gms.location.places.Places;
+import com.google.android.gms.location.places.PlaceDetectionClient;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 
@@ -21,7 +21,8 @@ import heritagewalk.com.heritagewalk.R;
 import heritagewalk.com.heritagewalk.models.Site;
 
 public class SitePageActivity extends FragmentActivity {
-//    protected GeoDataClient mGeoDataClient;
+    protected GeoDataClient mGeoDataClient;
+    protected PlaceDetectionClient mPlaceDetectionClient;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,10 +30,10 @@ public class SitePageActivity extends FragmentActivity {
         setContentView(R.layout.activity_main);
 
 //        // Construct a GeoDataClient.
-//        mGeoDataClient = Places.getGeoDataClient(this, null);
+        mGeoDataClient = Places.getGeoDataClient(this, null);
 //
 //        // Construct a PlaceDetectionClient.
-//        mPlaceDetectionClient = Places.getPlaceDetectionClient(this, null);
+        mPlaceDetectionClient = Places.getPlaceDetectionClient(this, null);
 
         // TODO: Start using the Places API.
     }

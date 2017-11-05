@@ -27,6 +27,8 @@ dependencies {
     // Google Maps and Services
     implementation 'com.google.android.gms:play-services-maps:11.4.2'
     implementation 'com.google.android.gms:play-services-auth:11.4.2'
+    implementation 'com.google.android.gms:play-services-places:11.4.2'
+
     //noinspection GradleDynamicVersion
     implementation 'com.google.maps.android:android-maps-utils:0.5+'
 
