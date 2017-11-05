@@ -44,5 +44,6 @@
     <string name="firebase_status_fmt">Firebase User: %s</string>
     <string name="firebase_user_management">Firebase User Management</string>
     <string name="button_open_login_signup">Open Login/Signup</string>
+    <string name="title_activity_site_page">SitePageActivity</string>
 
 </resources>
