@@ -219,6 +219,9 @@ public class MapsActivity extends FragmentActivity
         Intent intent = new Intent(MapsActivity.this, SitePageActivity.class);
 //        Intent intent = new Intent(MapsActivity.this, SiteFragment.class);
         intent.putExtra("selectedSiteName", newSite.getName());
+        intent.putExtra("selectedSiteDesc", newSite.getDescription());
+        intent.putExtra("selectedSiteSummary", newSite.getSummary());
+
         intent.putExtra("selectedSiteLatLng", newSite.getLatLng().toString()) ;
         startActivity(intent);
     }
