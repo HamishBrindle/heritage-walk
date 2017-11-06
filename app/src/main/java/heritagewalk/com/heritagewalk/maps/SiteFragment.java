@@ -37,8 +37,6 @@ public class SiteFragment extends Fragment implements OnMapReadyCallback {
     MapView mMapView;
     View mView;
     LatLng location;
-    public float latitude;
-    public float longitude;
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -67,6 +65,9 @@ public class SiteFragment extends Fragment implements OnMapReadyCallback {
      */
     // TODO: Rename and change types and number of parameters
     public static SiteFragment newInstance(String param1, String param2) {
+        Log.d("lat", "" + SitePageActivity.latitude);
+        Log.d("SiteFrageNewInstance p1", param1);
+        Log.d("SiteFrageNewInstance p2", param2);
         SiteFragment fragment = new SiteFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
@@ -78,13 +79,9 @@ public class SiteFragment extends Fragment implements OnMapReadyCallback {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Intent in = this.getIntent();
-        Bundle b = in.getExtras();
 
-                latitude = savedInstanceState.getFloat("lat");
-        longitude = savedInstanceState.getFloat("lon");
-        Log.d("SiteFragOnCreate", "" + latitude);
-        Log.d("SiteFragOnCreate", "" + longitude);
+        Log.d("SiteFragOnCreate", "" + SitePageActivity.latitude);
+        Log.d("SiteFragOnCreate", "" + SitePageActivity.longitude);
 
         if (getArguments() != null) {
 
@@ -94,6 +91,8 @@ public class SiteFragment extends Fragment implements OnMapReadyCallback {
     }
 
     public static SiteFragment newInstance(float lat, float lon) {
+        Log.d("SiteFrageNewInstance la", "lat");
+        Log.d("SiteFrageNewInstance lo", "lon");
         SiteFragment f = new SiteFragment();
         Bundle args = new Bundle();
         args.putFloat("lat", lat);
@@ -151,10 +150,10 @@ public class SiteFragment extends Fragment implements OnMapReadyCallback {
 
         mGoogleMap = googleMap;
         googleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
-        Log.d("onMapReady", "" + latitude);
-        Log.d("onMapReady", "" + longitude);
+        Log.d("onMapReady", "" + SitePageActivity.latitude);
+        Log.d("onMapReady", "" + SitePageActivity.longitude);
 
-        location = new LatLng(latitude,longitude);
+        location = new LatLng(SitePageActivity.latitude, SitePageActivity.longitude);
 
         googleMap.addMarker(new MarkerOptions().position(location)).setTitle("hayyy");
         CameraPosition curSite = CameraPosition.builder().target(location).zoom(16).bearing(0).tilt(45).build();

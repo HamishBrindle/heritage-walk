@@ -8,6 +8,12 @@
     android:orientation="vertical"
     android:weightSum="4">
 
+
+    <!--<com.google.android.gms.maps.MapView-->
+        <!--android:id="@+id/mapview"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent" />-->
+
     <fragment
         android:name="heritagewalk.com.heritagewalk.maps.SiteFragment"
         android:id="@+id/mapview"

@@ -31,8 +31,8 @@ public class SitePageActivity extends FragmentActivity implements SiteFragment.O
     protected String sitePosition;
     protected String siteName;
     protected SiteFragment site;
-    private float latitude;
-    private float longitude;
+    static float latitude;
+    static float longitude;
     private String[] latlong;
 
     @Override
@@ -47,12 +47,10 @@ public class SitePageActivity extends FragmentActivity implements SiteFragment.O
         latlong =  sitePosition.split(",");
         Log.d("latlong", latlong[0]);
         Log.d("latlong", latlong[1]);
-        latitude = Float.parseFloat(latlong[0].replaceAll("[^\\d.]", ""));
-        longitude = Float.parseFloat(latlong[1].replaceAll("[^\\d.]", ""));
+        latitude = Float.parseFloat(latlong[0].replaceAll("[^\\d-.]", ""));
+        longitude = Float.parseFloat(latlong[1].replaceAll("[^\\d-.]", ""));
 
         SiteFragment site = SiteFragment.newInstance(latlong[0].replaceAll("[^\\d.]", ""), latlong[1].replaceAll("[^\\d.]", ""));
-
-
 
 //        // Construct a GeoDataClient.
         mGeoDataClient = Places.getGeoDataClient(this, null);
@@ -62,34 +60,6 @@ public class SitePageActivity extends FragmentActivity implements SiteFragment.O
 
         // TODO: Start using the Places API.
     }
-
-    protected void onCreate(Bundle savedInstanceState, long cat) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_site_page);
-        Intent intent = getIntent();
-
-        siteName = intent.getStringExtra("selectedSiteName");
-        sitePosition = intent.getStringExtra("selectedSiteLatLng");
-
-        latlong =  sitePosition.split(",");
-        Log.d("latlong", latlong[0]);
-        Log.d("latlong", latlong[1]);
-        latitude = Float.parseFloat(latlong[0].replaceAll("[^\\d.]", ""));
-        longitude = Float.parseFloat(latlong[1].replaceAll("[^\\d.]", ""));
-
-        SiteFragment site = SiteFragment.newInstance(latlong[0].replaceAll("[^\\d.]", ""), latlong[1].replaceAll("[^\\d.]", ""));
-
-
-
-//        // Construct a GeoDataClient.
-        mGeoDataClient = Places.getGeoDataClient(this, null);
-//
-//        // Construct a PlaceDetectionClient.
-        mPlaceDetectionClient = Places.getPlaceDetectionClient(this, null);
-
-        // TODO: Start using the Places API.
-    }
-
 
     @Override
     public void onFragmentInteraction(Uri uri) {
