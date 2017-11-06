@@ -58,7 +58,7 @@ public class SitePageActivity extends FragmentActivity implements SiteFragment.O
         latitude = convertStringToFloat(latlong[0]);
         longitude = convertStringToFloat(latlong[1]);
 
-
+        setUpViews();
         /*
             The parameters of the below constructer may have no bearing on the map since we're using the static
             latitude and longtitude in the SiteFragment class
