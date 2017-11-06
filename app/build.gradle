@@ -27,6 +27,8 @@ dependencies {
     // Google Maps and Services
     implementation 'com.google.android.gms:play-services-maps:11.4.2'
     implementation 'com.google.android.gms:play-services-auth:11.4.2'
+    implementation 'com.google.android.gms:play-services-places:11.4.2'
+
     //noinspection GradleDynamicVersion
     implementation 'com.google.maps.android:android-maps-utils:0.5+'
 
@@ -38,10 +40,13 @@ dependencies {
     implementation 'com.google.code.gson:gson:2.8.2'
 
     // Test
+    implementation 'com.android.support:support-v4:26.1.0'
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.1'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
 }
+
+
 
 
 apply plugin: 'com.google.gms.google-services'

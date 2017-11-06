@@ -3,13 +3,15 @@ package heritagewalk.com.heritagewalk.models;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.maps.android.clustering.ClusterItem;
 
+import java.io.Serializable;
+
 /**
  * Site is a heritage site location holding data.
  *
  * Created by hamis on 2017-10-05.
  */
 
-public class Site implements ClusterItem {
+public class Site implements ClusterItem, Serializable {
 
     private String Name;
     private LatLng latLng;

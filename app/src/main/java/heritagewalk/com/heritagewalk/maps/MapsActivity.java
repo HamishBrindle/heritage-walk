@@ -1,6 +1,7 @@
 package heritagewalk.com.heritagewalk.maps;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -19,7 +20,9 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.maps.android.clustering.Cluster;
 import com.google.maps.android.clustering.ClusterItem;
 import com.google.maps.android.clustering.ClusterManager;
+import com.google.maps.android.clustering.algo.Algorithm;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -33,8 +36,8 @@ public class MapsActivity extends FragmentActivity
         ClusterManager.OnClusterClickListener<Site>,
         ClusterManager.OnClusterInfoWindowClickListener<Site>,
         ClusterManager.OnClusterItemClickListener<Site>,
-        ClusterManager.OnClusterItemInfoWindowClickListener<Site> {
-
+        ClusterManager.OnClusterItemInfoWindowClickListener<Site>,
+        Serializable {
     private static final String TAG = "MapsActivity";
     private static final float DEFAULT_ZOOM = 12.0f;
     private static final float MIN_ZOOM = 10.0f;
@@ -165,6 +168,7 @@ public class MapsActivity extends FragmentActivity
         // We implement our own renderer so we can use custom-styled markers.
         mClusterManager.setRenderer(new SiteMarkerRenderer(this, mMap, mClusterManager));
 
+
         // Point the map's listeners at the listeners implemented by the cluster manager.
         mMap.setOnCameraIdleListener(mClusterManager);
         mMap.setOnMarkerClickListener(mClusterManager);
@@ -172,9 +176,16 @@ public class MapsActivity extends FragmentActivity
         mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
             @Override
             public void onInfoWindowClick(Marker marker) {
+                Log.d("newTag",marker.getTitle());
+                for(Site site : mHeritageSites) {
+                    if(marker.getTitle().equals(site.getName())) {
+                        startNewSiteActivity(site);
+                    }
+                }
                 Toast.makeText(MapsActivity.this, "Info Window", Toast.LENGTH_SHORT).show();
             }
         });
+
 
         mClusterManager.setOnClusterClickListener(this);
         mClusterManager.setOnClusterInfoWindowClickListener(this);
@@ -199,6 +210,20 @@ public class MapsActivity extends FragmentActivity
         } else {
             Log.e(TAG, "onMapReady: Sites array is null!");
         }
+    }
+    /*
+    * Serializing the site object is giving me issues, so I'm going to reload the site using Google places
+    * in the SitePageActivity
+    * */
+    private void startNewSiteActivity(Site newSite) {
+        Intent intent = new Intent(MapsActivity.this, SitePageActivity.class);
+//        Intent intent = new Intent(MapsActivity.this, SiteFragment.class);
+        intent.putExtra("selectedSiteName", newSite.getName());
+        intent.putExtra("selectedSiteDesc", newSite.getDescription());
+        intent.putExtra("selectedSiteSummary", newSite.getSummary());
+
+        intent.putExtra("selectedSiteLatLng", newSite.getLatLng().toString()) ;
+        startActivity(intent);
     }
 
     @Override
