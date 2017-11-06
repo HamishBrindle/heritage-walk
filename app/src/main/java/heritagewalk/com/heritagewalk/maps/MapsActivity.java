@@ -38,7 +38,6 @@ public class MapsActivity extends FragmentActivity
         ClusterManager.OnClusterItemClickListener<Site>,
         ClusterManager.OnClusterItemInfoWindowClickListener<Site>,
         Serializable {
-
     private static final String TAG = "MapsActivity";
     private static final float DEFAULT_ZOOM = 12.0f;
     private static final float MIN_ZOOM = 10.0f;
@@ -217,9 +216,10 @@ public class MapsActivity extends FragmentActivity
     * in the SitePageActivity
     * */
     private void startNewSiteActivity(Site newSite) {
-        Log.d("siteName", newSite.getName());
         Intent intent = new Intent(MapsActivity.this, SitePageActivity.class);
+//        Intent intent = new Intent(MapsActivity.this, SiteFragment.class);
         intent.putExtra("selectedSiteName", newSite.getName());
+        intent.putExtra("selectedSiteLatLng", newSite.getLatLng().toString()) ;
         startActivity(intent);
     }
 
