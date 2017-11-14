@@ -39,11 +39,6 @@ public class SitePageActivity extends FragmentActivity implements SiteFragment.O
     protected SiteFragment site;
     static float latitude;
     static float longitude;
-    final private String BUSINESS_PROMPT = "Come check out these businesses!" ;
-    private String[] latlong;
-    private TextView siteTitleView;
-    private TextView siteSummView;
-    private TextView businessPromptView;
 
     private TextView siteTitle;
 
@@ -55,7 +50,7 @@ public class SitePageActivity extends FragmentActivity implements SiteFragment.O
         siteName = intent.getStringExtra("selectedSiteName");
         sitePosition = intent.getStringExtra("selectedSiteLatLng");
         siteSummary = intent.getStringExtra("selectedSiteSummary");
-        latlong =  sitePosition.split(",");
+        String[] latlong = sitePosition.split(",");
         latitude = convertStringToFloat(latlong[0]);
         longitude = convertStringToFloat(latlong[1]);
 
@@ -77,18 +72,16 @@ public class SitePageActivity extends FragmentActivity implements SiteFragment.O
     }
 
     private void setUpViews() {
-
-        siteTitleView = findViewById(R.id.siteTitle);
+        TextView siteTitleView = findViewById(R.id.siteTitle);
         siteTitleView.setText(siteName);
 
-        siteSummView = findViewById(R.id.siteSummary);
+        TextView siteSummView = findViewById(R.id.siteSummary);
         siteSummView.setText(siteSummary);
 
-        businessPromptView = findViewById(R.id.businessPrompt);
+        TextView businessPromptView = findViewById(R.id.businessPrompt);
+        String BUSINESS_PROMPT = "Come check out these businesses!";
         businessPromptView.setText(BUSINESS_PROMPT);
-
     }
-
     @Override
     public void onFragmentInteraction(Uri uri) {
 

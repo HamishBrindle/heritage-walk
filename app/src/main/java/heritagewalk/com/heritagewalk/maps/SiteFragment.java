@@ -243,7 +243,7 @@ public class SiteFragment extends Fragment implements OnMapReadyCallback,
         }
 //        googleMap.addMarker(new MarkerOptions().position(siteLocation)).setTitle("hayyy");
         CameraPosition startingPositionCamera = CameraPosition.builder().target(startingLocation).zoom(16).bearing(0).tilt(45).build();
-//        googleMap.moveCamera(CameraUpdateFactory.newCameraPosition(startingPositionCamera));
+        googleMap.moveCamera(CameraUpdateFactory.newCameraPosition(startingPositionCamera));
 
 
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
