@@ -1,26 +1,50 @@
 package heritagewalk.com.heritagewalk.maps;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.places.GeoDataClient;
+import com.google.android.gms.location.places.PlaceDetectionClient;
+import com.google.android.gms.location.places.Places;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnSuccessListener;
 
+import heritagewalk.com.heritagewalk.Manifest;
 import heritagewalk.com.heritagewalk.R;
+import heritagewalk.com.heritagewalk.maps.tasks.MockLocationProvider;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -30,25 +54,33 @@ import heritagewalk.com.heritagewalk.R;
  * Use the {@link SiteFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class SiteFragment extends Fragment implements OnMapReadyCallback {
+public class SiteFragment extends Fragment implements OnMapReadyCallback,
+        GoogleApiClient.ConnectionCallbacks,
+        GoogleApiClient.OnConnectionFailedListener,
+        LocationListener {
 
-
+    public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
     GoogleMap mGoogleMap;
     MapView mMapView;
     View mView;
-    LatLng location;
+    GoogleApiClient mGoogleApiClient;
+    LocationRequest mLocationRequest;
+    FusedLocationProviderClient mFusedLocationClient;
+    Location mLastLocation;
+    Marker mCurrLocationMarker;
+    OnSuccessListener<Location> mSuccessListener;
+    MockLocationProvider mMockLocationProvider;
 
-    // TODO: Rename parameter arguments, choose names that match
+
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
     private LatLng siteLocation;
-
-    // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
 
+    final LatLng centerOfNewWest = new LatLng(49.2057, 122.9110);
     private OnFragmentInteractionListener mListener;
 
     public SiteFragment() {
@@ -59,67 +91,83 @@ public class SiteFragment extends Fragment implements OnMapReadyCallback {
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
+
      * @return A new instance of fragment SiteFragment.
      */
-    // TODO: Rename and change types and number of parameters
-    public static SiteFragment newInstance(String param1, String param2) {
-        Log.d("lat", "" + SitePageActivity.latitude);
-        Log.d("SiteFrageNewInstance p1", param1);
-        Log.d("SiteFrageNewInstance p2", param2);
+    public static SiteFragment newInstance() {
         SiteFragment fragment = new SiteFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
         return fragment;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(getContext());
+        mMockLocationProvider = new MockLocationProvider(LocationManager.NETWORK_PROVIDER, getContext());
 
-        Log.d("SiteFragOnCreate", "" + SitePageActivity.latitude);
-        Log.d("SiteFragOnCreate", "" + SitePageActivity.longitude);
+        mMockLocationProvider.pushLocation(centerOfNewWest.latitude, centerOfNewWest.longitude);
+
+        LocationManager locMgr = (LocationManager) getContext().getSystemService(Context.LOCATION_SERVICE);
+        LocationListener lis = new LocationListener() {
+            public void onLocationChanged(Location location) {
+                //You will get the mock location
+            }
+
+            @Override
+            public void onStatusChanged(String s, int i, Bundle bundle) {
+
+            }
+
+            @Override
+            public void onProviderEnabled(String s) {
+
+            }
+
+            @Override
+            public void onProviderDisabled(String s) {
+
+            }
+            //...
+        };
+
+        /*
+        * Checking permissions
+        * */
+        if (ActivityCompat.checkSelfPermission(getContext(),
+                android.Manifest.permission.ACCESS_FINE_LOCATION) !=
+                PackageManager.PERMISSION_GRANTED &&
+                ActivityCompat.checkSelfPermission(getContext(), android.Manifest.permission.ACCESS_COARSE_LOCATION) !=
+                PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
+        locMgr.requestLocationUpdates(
+                LocationManager.NETWORK_PROVIDER, 1000, 1, lis);
 
         if (getArguments() != null) {
-
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
     }
 
-    public static SiteFragment newInstance(float lat, float lon) {
-        Log.d("SiteFrageNewInstance la", "lat");
-        Log.d("SiteFrageNewInstance lo", "lon");
-        SiteFragment f = new SiteFragment();
-        Bundle args = new Bundle();
-        args.putFloat("lat", lat);
-        args.putFloat("lon", lon);
-        f.setArguments(args);
-        return f;
-    }
-
-    public void updateMap(float lat, float lon) {
-
-    }
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-
-        mView =  inflater.inflate(R.layout.fragment_site, container, false);
+        mView = inflater.inflate(R.layout.fragment_site, container, false);
         return mView;
     }
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-
         super.onViewCreated(view, savedInstanceState);
         mMapView = (MapView) mView.findViewById(R.id.mapview);
-        if(mMapView != null) {
+        if (mMapView != null) {
             mMapView.onCreate(null);
             mMapView.onResume();
             mMapView.getMapAsync(this);
@@ -146,19 +194,181 @@ public class SiteFragment extends Fragment implements OnMapReadyCallback {
     @Override
     public void onMapReady(GoogleMap googleMap) {
 
-        MapsInitializer.initialize(getContext());
-
+//        MapsInitializer.initialize(getContext());
         mGoogleMap = googleMap;
         googleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
-        Log.d("onMapReady", "" + SitePageActivity.latitude);
-        Log.d("onMapReady", "" + SitePageActivity.longitude);
 
-        location = new LatLng(SitePageActivity.latitude, SitePageActivity.longitude);
+        siteLocation = new LatLng(SitePageActivity.latitude, SitePageActivity.longitude);
 
-        googleMap.addMarker(new MarkerOptions().position(location)).setTitle("hayyy");
-        CameraPosition curSite = CameraPosition.builder().target(location).zoom(16).bearing(0).tilt(45).build();
+        googleMap.addMarker(new MarkerOptions().position(siteLocation)).setTitle("hayyy");
+        CameraPosition curSite = CameraPosition.builder().target(siteLocation).zoom(16).bearing(0).tilt(45).build();
 
         googleMap.moveCamera(CameraUpdateFactory.newCameraPosition(curSite));
+
+        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (ContextCompat.checkSelfPermission(getContext(),
+                    android.Manifest.permission.ACCESS_FINE_LOCATION)
+                    == PackageManager.PERMISSION_GRANTED) {
+                buildGoogleApiClient();
+                googleMap.setMyLocationEnabled(true);
+            }
+        }
+        else {
+            buildGoogleApiClient();
+            googleMap.setMyLocationEnabled(true);
+        }
+    }
+
+    protected synchronized void buildGoogleApiClient() {
+        mGoogleApiClient = new GoogleApiClient.Builder(getContext())
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .addApi(LocationServices.API)
+                .build();
+        mGoogleApiClient.connect();
+    }
+
+    @Override
+    public void onLocationChanged(Location location) {
+        mLastLocation = location;
+        if (mCurrLocationMarker != null) {
+            mCurrLocationMarker.remove();
+        }
+
+        //Place current location marker
+        LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
+        MarkerOptions markerOptions = new MarkerOptions();
+        markerOptions.position(latLng);
+        markerOptions.title("Current Position");
+        markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA));
+        mCurrLocationMarker = mGoogleMap.addMarker(markerOptions);
+
+        //move map camera
+        mGoogleMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
+        mGoogleMap.animateCamera(CameraUpdateFactory.zoomTo(11));
+
+        //stop location updates
+        if (mGoogleApiClient != null) {
+            mFusedLocationClient.removeLocationUpdates((LocationCallback) mSuccessListener);
+        }
+
+    }
+
+    @Override
+    public void onStatusChanged(String s, int i, Bundle bundle) {
+
+    }
+
+    @Override
+    public void onProviderEnabled(String s) {
+
+    }
+
+    @Override
+    public void onProviderDisabled(String s) {
+
+    }
+
+    /*
+    * Setting interval to continually update the user's position every 1000 ms
+    * */
+    @Override
+    public void onConnected(@Nullable Bundle bundle) {
+
+        mSuccessListener = new OnSuccessListener<Location>() {
+            @Override
+            public void onSuccess(Location location) {
+                // Got last known location. In some rare situations this can be null.
+                if (location != null) {
+                    // Logic to handle location object
+                }
+            }
+        };
+
+        mLocationRequest = new LocationRequest();
+        mLocationRequest.setInterval(1000);
+        mLocationRequest.setFastestInterval(1000);
+        mLocationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
+        if (ContextCompat.checkSelfPermission(getContext(),
+            android.Manifest.permission.ACCESS_FINE_LOCATION)
+            == PackageManager.PERMISSION_GRANTED) {
+                mFusedLocationClient.getLastLocation()
+                    .addOnSuccessListener((Activity) getContext(), mSuccessListener);
+        }
+
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case MY_PERMISSIONS_REQUEST_LOCATION: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+                    // Permission was granted.
+                    if (ContextCompat.checkSelfPermission((Activity) getContext(),
+                            android.Manifest.permission.ACCESS_FINE_LOCATION)
+                            == PackageManager.PERMISSION_GRANTED) {
+
+                        if (mGoogleApiClient == null) {
+                            buildGoogleApiClient();
+                        }
+                        mGoogleMap.setMyLocationEnabled(true);
+                    }
+
+                } else {
+
+                    // Permission denied, Disable the functionality that depends on this permission.
+                    Toast.makeText(getContext(), "permission denied", Toast.LENGTH_LONG).show();
+                }
+                return;
+            }
+
+            // other 'case' lines to check for other permissions this app might request.
+            //You can add here other case statements according to your requirement.
+        }
+    }
+
+    public boolean checkLocationPermission(){
+        if (ContextCompat.checkSelfPermission(getContext(),
+                android.Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+
+            // Asking user if explanation is needed
+            if (ActivityCompat.shouldShowRequestPermissionRationale((Activity) getContext(),
+                    android.Manifest.permission.ACCESS_FINE_LOCATION)) {
+
+                // Show an expanation to the user *asynchronously* -- don't block
+                // this thread waiting for the user's response! After the user
+                // sees the explanation, try again to request the permission.
+
+                //Prompt the user once explanation has been shown
+                ActivityCompat.requestPermissions((Activity) getContext(),
+                        new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
+                        MY_PERMISSIONS_REQUEST_LOCATION);
+
+            } else {
+                // No explanation needed, we can request the permission.
+                ActivityCompat.requestPermissions((Activity) getContext(),
+                        new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
+                        MY_PERMISSIONS_REQUEST_LOCATION);
+            }
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
 
     }
 
