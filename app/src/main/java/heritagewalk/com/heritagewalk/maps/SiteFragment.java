@@ -2,7 +2,6 @@ package heritagewalk.com.heritagewalk.maps;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
@@ -26,13 +25,9 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
-import com.google.android.gms.location.places.GeoDataClient;
-import com.google.android.gms.location.places.PlaceDetectionClient;
-import com.google.android.gms.location.places.Places;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
-import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
@@ -40,12 +35,22 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
+import com.google.maps.DirectionsApi;
+import com.google.maps.DirectionsApiRequest;
+import com.google.maps.GeoApiContext;
+import com.google.maps.android.PolyUtil;
+import com.google.maps.errors.ApiException;
+import com.google.maps.model.DirectionsResult;
+import com.google.maps.model.TravelMode;
 
+import org.joda.time.DateTime;
+
+import java.io.IOException;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
-import heritagewalk.com.heritagewalk.Manifest;
 import heritagewalk.com.heritagewalk.R;
 import heritagewalk.com.heritagewalk.maps.tasks.MockLocationProvider;
 
@@ -70,6 +75,7 @@ public class SiteFragment extends Fragment implements OnMapReadyCallback,
     LocationRequest mLocationRequest;
     FusedLocationProviderClient mFusedLocationClient;
     Location mLastLocation;
+    GeoApiContext mGeoApiContext;
     LatLng startingLocation;
     Marker mCurrLocationMarker;
 
@@ -126,6 +132,7 @@ public class SiteFragment extends Fragment implements OnMapReadyCallback,
         }
 
         mFusedLocationClient.setMockLocation(mMockLocationProvider.getLocationAt(0));
+
         mFusedLocationClient.setMockMode(true);
         Log.d("onCreate", "oncreate");
         LocationManager locMgr = (LocationManager) getContext().getSystemService(Context.LOCATION_SERVICE);
@@ -214,12 +221,12 @@ public class SiteFragment extends Fragment implements OnMapReadyCallback,
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
-
+        getGeoContext();
+        DirectionsResult directions = null;
         googleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
 
         siteLocation = new LatLng(SitePageActivity.latitude, SitePageActivity.longitude);
         startingLocation = new LatLng(mMockLocationProvider.getLocationAt(0).getLatitude(), mMockLocationProvider.getLocationAt(0).getLongitude());
-        LatLng testLocation = new LatLng(49.231275,-122.882664);
 
         if (ActivityCompat.checkSelfPermission(getContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) !=
                 PackageManager.PERMISSION_GRANTED &&
@@ -234,17 +241,10 @@ public class SiteFragment extends Fragment implements OnMapReadyCallback,
             // for ActivityCompat#requestPermissions for more details.
             return;
         }
+//        googleMap.addMarker(new MarkerOptions().position(siteLocation)).setTitle("hayyy");
+        CameraPosition startingPositionCamera = CameraPosition.builder().target(startingLocation).zoom(16).bearing(0).tilt(45).build();
+//        googleMap.moveCamera(CameraUpdateFactory.newCameraPosition(startingPositionCamera));
 
-        googleMap.addMarker(new MarkerOptions().position(siteLocation)).setTitle("hayyy");
-
-//        googleMap.addMarker(new MarkerOptions().position(centerOfNewWest)).setTitle("center of new west").icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA);
-
-
-        //want to get this as a mockLocation so we can use it as "my location' and track by GPS
-
-        CameraPosition curSite = CameraPosition.builder().target(startingLocation).zoom(16).bearing(0).tilt(45).build();
-
-        googleMap.moveCamera(CameraUpdateFactory.newCameraPosition(curSite));
 
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (ContextCompat.checkSelfPermission(getContext(),
@@ -258,6 +258,64 @@ public class SiteFragment extends Fragment implements OnMapReadyCallback,
             buildGoogleApiClient();
             googleMap.setMyLocationEnabled(true);
         }
+
+        try {
+            directions = getDirections(mGeoApiContext, startingLocation, siteLocation);
+            Log.d("aftertry", "aftertry");
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ApiException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        addMarkersToMap(directions, googleMap);
+        addPolyline(directions, googleMap);
+    }
+
+    private DirectionsResult getDirections(GeoApiContext mGeoApiContext, LatLng origin, LatLng destination)
+            throws InterruptedException, ApiException, IOException {
+        DateTime now = new DateTime();
+        String[] originString = origin.toString().split(",");
+        String[] destinationString = destination.toString().split(",");
+        float originLat = convertStringToFloat(originString[0]);
+        float originLon = convertStringToFloat(originString[1]);
+
+        float destinationLat = convertStringToFloat(destinationString[0]);
+        float destinationLon = convertStringToFloat(destinationString[1]);
+
+        Log.d("origin", origin.toString());
+        Log.d("destination", destination.toString());
+        DirectionsResult result = DirectionsApi.newRequest(getGeoContext())
+                .mode(TravelMode.WALKING)
+                .origin("" + originLat + "," + originLon)
+                .destination("" + destinationLat + "," + destinationLon)
+                .departureTime(now).await();
+        return result;
+    }
+
+    private float convertStringToFloat (String toConvert) {
+        return Float.parseFloat(toConvert.replaceAll("[^\\d-.]", ""));
+    }
+
+    private void addMarkersToMap(DirectionsResult results, GoogleMap mMap) {
+        mMap.addMarker(new MarkerOptions().position(new LatLng(results.routes[0].legs[0]
+                .startLocation.lat,results.routes[0].legs[0].startLocation.lng)).title(results
+                .routes[0].legs[0].startAddress));
+        mMap.addMarker(new MarkerOptions().position(new LatLng(results.routes[0].legs[0].endLocation
+                .lat,results.routes[0].legs[0].endLocation.lng)).title(results.routes[0].legs[0]
+                .startAddress).snippet(getEndLocationTitle(results)));
+    }
+
+    private String getEndLocationTitle(DirectionsResult results){
+        return  "Time :"+ results.routes[0].legs[0].duration.humanReadable
+                + " Distance :" + results.routes[0].legs[0].distance.humanReadable;
+    }
+
+    private void addPolyline(DirectionsResult results, GoogleMap mMap) {
+        List<LatLng> decodedPath = PolyUtil.decode(results.routes[0].overviewPolyline
+                .getEncodedPath());
+        mMap.addPolyline(new PolylineOptions().addAll(decodedPath));
     }
 
     protected synchronized void buildGoogleApiClient() {
@@ -267,6 +325,15 @@ public class SiteFragment extends Fragment implements OnMapReadyCallback,
                 .addApi(LocationServices.API)
                 .build();
         mGoogleApiClient.connect();
+    }
+
+    private GeoApiContext getGeoContext() {
+        mGeoApiContext= new GeoApiContext();
+        return mGeoApiContext.setQueryRateLimit(3)
+                .setApiKey(getString(R.string.directions_api_key))
+                .setConnectTimeout(1, TimeUnit.SECONDS)
+                .setReadTimeout(1, TimeUnit.SECONDS)
+                .setWriteTimeout(1, TimeUnit.SECONDS);
     }
 
     @Override
@@ -325,7 +392,6 @@ public class SiteFragment extends Fragment implements OnMapReadyCallback,
                 }
             }
         };
-
         mLocationRequest = new LocationRequest();
         mLocationRequest.setInterval(1000);
         mLocationRequest.setFastestInterval(1000);
@@ -336,7 +402,6 @@ public class SiteFragment extends Fragment implements OnMapReadyCallback,
                 mFusedLocationClient.getLastLocation()
                     .addOnSuccessListener((Activity) getContext(), mSuccessListener);
         }
-
     }
 
     @Override
