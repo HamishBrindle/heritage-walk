@@ -61,10 +61,6 @@ public class SitePageActivity extends FragmentActivity implements SiteFragment.O
 
         setUpViews();
 
-        /*
-            The parameters of the below constructer may have no bearing on the map since we're using the static
-            latitude and longtitude in the SiteFragment class
-        */
         SiteFragment site = SiteFragment.newInstance();
 
 //        // Construct a GeoDataClient.
