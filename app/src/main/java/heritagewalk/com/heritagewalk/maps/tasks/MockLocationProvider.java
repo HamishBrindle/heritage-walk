@@ -6,6 +6,9 @@ import android.location.LocationManager;
 import android.os.Build;
 import android.os.SystemClock;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * This class is used for pushing mock GPD data to the phone/emulator during testing.
  *
@@ -20,11 +23,12 @@ import android.os.SystemClock;
 public class MockLocationProvider {
     String providerName;
     Context ctx;
+    ArrayList<Location> mockLocations;
 
     public MockLocationProvider(String name, Context ctx) {
         this.providerName = name;
         this.ctx = ctx;
-
+        mockLocations = new ArrayList<Location>();
         LocationManager lm = (LocationManager) ctx.getSystemService(
                 Context.LOCATION_SERVICE);
         lm.addTestProvider(providerName, false, false, false, false, false,
@@ -45,8 +49,13 @@ public class MockLocationProvider {
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN) {
             mockLocation.setElapsedRealtimeNanos(SystemClock.elapsedRealtimeNanos());
         }
-
+        mockLocations.add(mockLocation);
         lm.setTestProviderLocation(providerName, mockLocation);
+    }
+
+    public Location getLocationAt(int index)
+    {
+        return mockLocations.get(index);
     }
 
     public void shutdown() {

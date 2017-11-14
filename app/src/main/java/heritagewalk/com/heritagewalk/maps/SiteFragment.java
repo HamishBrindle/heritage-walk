@@ -41,6 +41,9 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+
+import java.util.List;
 
 import heritagewalk.com.heritagewalk.Manifest;
 import heritagewalk.com.heritagewalk.R;
@@ -67,7 +70,9 @@ public class SiteFragment extends Fragment implements OnMapReadyCallback,
     LocationRequest mLocationRequest;
     FusedLocationProviderClient mFusedLocationClient;
     Location mLastLocation;
+    LatLng startingLocation;
     Marker mCurrLocationMarker;
+
     OnSuccessListener<Location> mSuccessListener;
     MockLocationProvider mMockLocationProvider;
 
@@ -80,7 +85,7 @@ public class SiteFragment extends Fragment implements OnMapReadyCallback,
     private String mParam1;
     private String mParam2;
 
-    final LatLng centerOfNewWest = new LatLng(49.2057, 122.9110);
+    final LatLng centerOfNewWest = new LatLng(49.2057, -122.9110);
     private OnFragmentInteractionListener mListener;
 
     public SiteFragment() {
@@ -104,9 +109,25 @@ public class SiteFragment extends Fragment implements OnMapReadyCallback,
         super.onCreate(savedInstanceState);
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(getContext());
         mMockLocationProvider = new MockLocationProvider(LocationManager.NETWORK_PROVIDER, getContext());
-
         mMockLocationProvider.pushLocation(centerOfNewWest.latitude, centerOfNewWest.longitude);
 
+        if (ActivityCompat.checkSelfPermission(getContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) !=
+                PackageManager.PERMISSION_GRANTED &&
+                ActivityCompat.checkSelfPermission(getContext(), android.Manifest.permission.ACCESS_COARSE_LOCATION) !=
+                        PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
+
+        mFusedLocationClient.setMockLocation(mMockLocationProvider.getLocationAt(0));
+        mFusedLocationClient.setMockMode(true);
+        Log.d("onCreate", "oncreate");
         LocationManager locMgr = (LocationManager) getContext().getSystemService(Context.LOCATION_SERVICE);
         LocationListener lis = new LocationListener() {
             public void onLocationChanged(Location location) {
@@ -137,7 +158,7 @@ public class SiteFragment extends Fragment implements OnMapReadyCallback,
                 android.Manifest.permission.ACCESS_FINE_LOCATION) !=
                 PackageManager.PERMISSION_GRANTED &&
                 ActivityCompat.checkSelfPermission(getContext(), android.Manifest.permission.ACCESS_COARSE_LOCATION) !=
-                PackageManager.PERMISSION_GRANTED) {
+                        PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
             //    ActivityCompat#requestPermissions
             // here to request the missing permissions, and then overriding
@@ -194,14 +215,34 @@ public class SiteFragment extends Fragment implements OnMapReadyCallback,
     @Override
     public void onMapReady(GoogleMap googleMap) {
 
-//        MapsInitializer.initialize(getContext());
-        mGoogleMap = googleMap;
         googleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
 
         siteLocation = new LatLng(SitePageActivity.latitude, SitePageActivity.longitude);
+        startingLocation = new LatLng(mMockLocationProvider.getLocationAt(0).getLatitude(), mMockLocationProvider.getLocationAt(0).getLongitude());
+        LatLng testLocation = new LatLng(49.231275,-122.882664);
+
+        if (ActivityCompat.checkSelfPermission(getContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) !=
+                PackageManager.PERMISSION_GRANTED &&
+                ActivityCompat.checkSelfPermission(getContext(), android.Manifest.permission.ACCESS_COARSE_LOCATION) !=
+                        PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
 
         googleMap.addMarker(new MarkerOptions().position(siteLocation)).setTitle("hayyy");
-        CameraPosition curSite = CameraPosition.builder().target(siteLocation).zoom(16).bearing(0).tilt(45).build();
+
+//        googleMap.addMarker(new MarkerOptions().position(centerOfNewWest)).setTitle("center of new west").icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA);
+
+
+        //want to get this as a mockLocation so we can use it as "my location' and track by GPS
+
+        CameraPosition curSite = CameraPosition.builder().target(startingLocation).zoom(16).bearing(0).tilt(45).build();
 
         googleMap.moveCamera(CameraUpdateFactory.newCameraPosition(curSite));
 
