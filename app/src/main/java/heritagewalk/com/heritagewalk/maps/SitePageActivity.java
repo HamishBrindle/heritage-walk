@@ -17,6 +17,8 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -37,14 +39,8 @@ public class SitePageActivity extends FragmentActivity implements SiteFragment.O
     protected SiteFragment site;
     static float latitude;
     static float longitude;
-    final private String BUSINESS_PROMPT = "Come check out these businesses!" ;
-    private String[] latlong;
-    private TextView siteTitleView;
-    private TextView siteSummView;
-    private TextView businessPromptView;
+
     private TextView siteTitle;
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,16 +50,13 @@ public class SitePageActivity extends FragmentActivity implements SiteFragment.O
         siteName = intent.getStringExtra("selectedSiteName");
         sitePosition = intent.getStringExtra("selectedSiteLatLng");
         siteSummary = intent.getStringExtra("selectedSiteSummary");
-        latlong =  sitePosition.split(",");
+        String[] latlong = sitePosition.split(",");
         latitude = convertStringToFloat(latlong[0]);
         longitude = convertStringToFloat(latlong[1]);
 
+        setUpViews();
 
-        /*
-            The parameters of the below constructer may have no bearing on the map since we're using the static
-            latitude and longtitude in the SiteFragment class
-        */
-        SiteFragment site = SiteFragment.newInstance(latlong[0], latlong[1]);
+        SiteFragment site = SiteFragment.newInstance();
 
 //        // Construct a GeoDataClient.
         mGeoDataClient = Places.getGeoDataClient(this, null);
@@ -79,18 +72,16 @@ public class SitePageActivity extends FragmentActivity implements SiteFragment.O
     }
 
     private void setUpViews() {
-
-        siteTitleView = findViewById(R.id.siteTitle);
+        TextView siteTitleView = findViewById(R.id.siteTitle);
         siteTitleView.setText(siteName);
 
-        siteSummView = findViewById(R.id.siteSummary);
+        TextView siteSummView = findViewById(R.id.siteSummary);
         siteSummView.setText(siteSummary);
 
-        businessPromptView = findViewById(R.id.businessPrompt);
+        TextView businessPromptView = findViewById(R.id.businessPrompt);
+        String BUSINESS_PROMPT = "Come check out these businesses!";
         businessPromptView.setText(BUSINESS_PROMPT);
-
     }
-
     @Override
     public void onFragmentInteraction(Uri uri) {
 

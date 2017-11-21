@@ -6,7 +6,8 @@
     android:layout_height="match_parent"
     android:background="@color/grey_100"
     android:orientation="vertical"
-    android:weightSum="10">
+    android:weightSum="10"
+    tools:showIn="@layout/activity_site_page">
 
     <fragment
         android:name="heritagewalk.com.heritagewalk.maps.SiteFragment"
