@@ -11,6 +11,9 @@ import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
+
+import com.google.android.gms.maps.model.LatLng;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -23,12 +26,15 @@ import heritagewalk.com.heritagewalk.models.Site;
 
 public class MapsActivity extends FragmentActivity
         implements OnJSONParseCompleted,
-        MapsFragment.OnFragmentInteractionListener {
+        MapsFragment.OnFragmentInteractionListener,
+        SiteFragment.OnFragmentInteractionListener {
 
     private static final String TAG = "MapsActivity";
 
     public static ArrayList<Site> mHeritageSites;
     private BottomNavigationView mBottomNavigation;
+    
+    public static LatLng SITE_LATLNG;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,9 +53,13 @@ public class MapsActivity extends FragmentActivity
                         break;
                     case R.id.action_sites:
                         Log.e("msg", "action sites clicked");
-                        setNewFragment(new SiteFragment());
+                        if (SITE_LATLNG == null) {
+                            Toast.makeText(MapsActivity.this, "Please select a site", Toast.LENGTH_SHORT).show();
+                            Log.e(TAG, "onNavigationItemSelected: Please select a site.");
+                        } else {
+                            setNewFragment(new SiteFragment());
+                        }
                         break;
-
                     default:
                         break;
                 }

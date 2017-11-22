@@ -269,12 +269,7 @@ public class MapsFragment extends Fragment implements
         mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
             @Override
             public void onInfoWindowClick(Marker marker) {
-                Log.d("newTag", marker.getTitle());
-                for (Site site : mHeritageSites) {
-                    if (marker.getTitle().equals(site.getName())) {
-                        startNewSiteActivity(site);
-                    }
-                }
+                MapsActivity.SITE_LATLNG = marker.getPosition();
                 Toast.makeText(getContext(), "Info Window", Toast.LENGTH_SHORT).show();
             }
         });
