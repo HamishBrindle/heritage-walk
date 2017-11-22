@@ -62,7 +62,7 @@ import heritagewalk.com.heritagewalk.maps.tasks.MockLocationProvider;
  * Use the {@link SiteFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class SiteFragment extends Fragment implements OnMapReadyCallback,
+public class SiteFragment extends android.support.v4.app.Fragment implements OnMapReadyCallback,
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener,
         LocationListener {
