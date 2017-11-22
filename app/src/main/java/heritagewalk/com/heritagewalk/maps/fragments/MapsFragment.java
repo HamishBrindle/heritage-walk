@@ -7,6 +7,7 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
@@ -18,8 +19,8 @@ import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.maps.android.clustering.Cluster;
@@ -27,14 +28,11 @@ import com.google.maps.android.clustering.ClusterManager;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 import heritagewalk.com.heritagewalk.R;
 import heritagewalk.com.heritagewalk.maps.MapsActivity;
 import heritagewalk.com.heritagewalk.maps.SiteMarkerRenderer;
 import heritagewalk.com.heritagewalk.maps.SitePageActivity;
-import heritagewalk.com.heritagewalk.maps.tasks.JSONParseAsyncTask;
-import heritagewalk.com.heritagewalk.maps.tasks.OnJSONParseCompleted;
 import heritagewalk.com.heritagewalk.models.Site;
 
 
@@ -43,10 +41,11 @@ import heritagewalk.com.heritagewalk.models.Site;
  * Activities that contain this fragment must implement the
  * {@link MapsFragment.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link MapsFragment#newInstance} factory method to
+ * Use the {@link MapsFragment#newMapsFragmentInstance} factory method to
  * create an instance of this fragment.
  */
-public class MapsFragment extends Fragment implements OnMapReadyCallback,
+public class MapsFragment extends Fragment implements
+        OnMapReadyCallback,
         ClusterManager.OnClusterClickListener<Site>,
         ClusterManager.OnClusterInfoWindowClickListener<Site>,
         ClusterManager.OnClusterItemClickListener<Site>,
@@ -61,7 +60,8 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback,
     private static final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 200;
 
     private GoogleMap mMap;
-    private ArrayList<Site> mHeritageSites;
+    private MapView mMapView;
+    private ArrayList<Site> mHeritageSites = MapsActivity.mHeritageSites;
     private ClusterManager<Site> mClusterManager;
 
     // TODO: Rename parameter arguments, choose names that match
@@ -74,6 +74,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback,
     private String mParam2;
 
     private OnFragmentInteractionListener mListener;
+    private View mView;
 
     public MapsFragment() {
         // Required empty public constructor
@@ -104,16 +105,26 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback,
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
-        // Obtain data from JSON (later calls AddMarkersAsyncTask)
-        // This is basically what kicks everything off.
-        new JSONParseAsyncTask(getActivity()).execute();
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_maps, container, false);
+        mView = inflater.inflate(R.layout.fragment_maps, container, false);
+        return mView;
+    }
+
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        mMapView = (MapView) mView.findViewById(R.id.map_view);
+        if (mMapView != null) {
+            mMapView.onCreate(null);
+            mMapView.onResume();
+            mMapView.getMapAsync(this);
+        }
+
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -157,6 +168,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback,
 
     @Override
     public void onMapReady(GoogleMap map) {
+        Log.e(TAG, "onMapReady: " + "Inside onMapReady");
         mMap = map;
 
         // Do all the map setup (Camera, permissions, etc.)

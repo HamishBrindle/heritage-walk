@@ -8,7 +8,14 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.internal.BottomNavigationMenu;
 import android.support.design.widget.BottomNavigationView;
+
+import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.design.widget.BottomNavigationView;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -25,12 +32,13 @@ import heritagewalk.com.heritagewalk.maps.tasks.OnJSONParseCompleted;
 import heritagewalk.com.heritagewalk.models.Site;
 
 public class MapsActivity extends FragmentActivity
-        implements OnJSONParseCompleted, SiteFragment.OnFragmentInteractionListener {
+        implements OnJSONParseCompleted, SiteFragment.OnFragmentInteractionListener,MapsFragment.OnFragmentInteractionListener {
+
 
     private static final String TAG = "MapsActivity";
 
-    private ArrayList<Site> mHeritageSites;
-    private ClusterManager<Site> mClusterManager;
+    public static ArrayList<Site> mHeritageSites;
+    private BottomNavigationView mBottomNavigation;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,11 +58,6 @@ public class MapsActivity extends FragmentActivity
                         break;
                     case R.id.action_sites:
                         Log.e("msg", "action sites clicked");
-                        //SiteFragment siteFrag = new SiteFragment();
-                        //siteFrag.setRetainInstance(true);
-                        //fm.beginTransaction().setCustomAnimations(android.R.animator.fade_in, android.R.animator.fade_out).show(siteFrag).commit();
-                        //siteFrag.show(fm, "userfragemnt");
-                        //SiteFragment siteFrag = (SiteFragment) getSupportFragmentManager().findFragmentById(R.id.frame_container);
                         setFragment(new SiteFragment());
                         break;
 
@@ -79,7 +82,7 @@ public class MapsActivity extends FragmentActivity
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction =
                 fragmentManager.beginTransaction();
-        fragmentTransaction.replace(android.R.id.content, fragment);
+        fragmentTransaction.replace(R.id.frame_container, fragment);
         fragmentTransaction.commit();
     }
 
@@ -93,6 +96,30 @@ public class MapsActivity extends FragmentActivity
         Log.d(TAG, "onJSONParseCompleted: Downloaded sites successfully...");
 
         // TODO: Execute Fragment change to MapFragment
+        // Create new fragment and transaction
+        Fragment newFragment = MapsFragment.newInstance(null, null);
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+
+        // Replace whatever is in the fragment_container view with this fragment,
+        // and add the transaction to the back stack
+        transaction.replace(R.id.frame_container, newFragment);
+        transaction.addToBackStack(null);
+
+        // Commit the transaction
+        transaction.commit();
+    }
+
+    private boolean setNewFragment(Fragment fragment) {
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+
+        // Replace whatever is in the fragment_container view with this fragment,
+        // and add the transaction to the back stack
+        transaction.replace(R.id.fragment_holder, fragment);
+        transaction.addToBackStack(null);
+
+        // Commit the transaction
+        transaction.commit();
+        return true;
     }
 
     @Override
