@@ -41,7 +41,7 @@ import heritagewalk.com.heritagewalk.models.Site;
  * Activities that contain this fragment must implement the
  * {@link MapsFragment.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link MapsFragment#newMapsFragmentInstance} factory method to
+ * Use the {@link MapsFragment#newInstance(String, String)} factory method to
  * create an instance of this fragment.
  */
 public class MapsFragment extends Fragment implements
@@ -332,6 +332,7 @@ public class MapsFragment extends Fragment implements
 
     @Override
     public void onClusterItemInfoWindowClick(Site site) {
+        MapsActivity.SITE_LATLNG = site.getLatLng();
         Toast.makeText(getContext(), "Info Window", Toast.LENGTH_SHORT).show();
     }
 }
