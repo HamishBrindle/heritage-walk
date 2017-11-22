@@ -62,7 +62,7 @@ import heritagewalk.com.heritagewalk.maps.tasks.MockLocationProvider;
  * Use the {@link SiteFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class SiteFragment extends Fragment implements OnMapReadyCallback,
+public class SiteFragment extends android.support.v4.app.Fragment implements OnMapReadyCallback,
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener,
         LocationListener {
@@ -225,7 +225,7 @@ public class SiteFragment extends Fragment implements OnMapReadyCallback,
         DirectionsResult directions = null;
         googleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
 
-        siteLocation = new LatLng(SitePageActivity.latitude, SitePageActivity.longitude);
+        siteLocation = new LatLng(MapsActivity.SITE_LATLNG.latitude, MapsActivity.SITE_LATLNG.longitude);
         startingLocation = new LatLng(mMockLocationProvider.getLocationAt(0).getLatitude(), mMockLocationProvider.getLocationAt(0).getLongitude());
 
         if (ActivityCompat.checkSelfPermission(getContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) !=
