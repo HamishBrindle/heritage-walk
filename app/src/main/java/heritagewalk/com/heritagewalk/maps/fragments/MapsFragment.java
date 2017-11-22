@@ -41,10 +41,10 @@ import heritagewalk.com.heritagewalk.models.Site;
  * Activities that contain this fragment must implement the
  * {@link MapsFragment.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link MapsFragment#newMapsFragmentInstance} factory method to
+ * Use the {@link MapsFragment#newInstance(String, String)} factory method to
  * create an instance of this fragment.
  */
-public class MapsFragment extends Fragment implements
+public class MapsFragment extends android.support.v4.app.Fragment implements
         OnMapReadyCallback,
         ClusterManager.OnClusterClickListener<Site>,
         ClusterManager.OnClusterInfoWindowClickListener<Site>,
@@ -101,6 +101,7 @@ public class MapsFragment extends Fragment implements
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        MapsActivity.SITE_LATLNG = null;
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
@@ -269,12 +270,7 @@ public class MapsFragment extends Fragment implements
         mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
             @Override
             public void onInfoWindowClick(Marker marker) {
-                Log.d("newTag", marker.getTitle());
-                for (Site site : mHeritageSites) {
-                    if (marker.getTitle().equals(site.getName())) {
-                        startNewSiteActivity(site);
-                    }
-                }
+                MapsActivity.SITE_LATLNG = marker.getPosition();
                 Toast.makeText(getContext(), "Info Window", Toast.LENGTH_SHORT).show();
             }
         });
@@ -300,6 +296,7 @@ public class MapsFragment extends Fragment implements
                 if (!site.getDescription().isEmpty())
                     mClusterManager.addItem(site);
             }
+            Log.e(TAG, "onMapReady: Finished Adding markers to map");
         } else {
             Log.e(TAG, "onMapReady: Sites array is null!");
         }
@@ -337,6 +334,7 @@ public class MapsFragment extends Fragment implements
 
     @Override
     public void onClusterItemInfoWindowClick(Site site) {
+        MapsActivity.SITE_LATLNG = site.getLatLng();
         Toast.makeText(getContext(), "Info Window", Toast.LENGTH_SHORT).show();
     }
 }

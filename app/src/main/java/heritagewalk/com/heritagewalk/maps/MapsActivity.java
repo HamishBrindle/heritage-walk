@@ -19,6 +19,9 @@ import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
+
+import com.google.android.gms.maps.model.LatLng;
 
 import com.google.maps.android.clustering.ClusterManager;
 
@@ -35,17 +38,19 @@ public class MapsActivity extends FragmentActivity
         implements OnJSONParseCompleted, SiteFragment.OnFragmentInteractionListener,MapsFragment.OnFragmentInteractionListener {
 
 
+
     private static final String TAG = "MapsActivity";
 
     public static ArrayList<Site> mHeritageSites;
-    private BottomNavigationView mBottomNavigation;
+    
+    public static LatLng SITE_LATLNG;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
-        BottomNavigationView bottomNavigationView = (BottomNavigationView) findViewById(R.id.navigation);
 
+        BottomNavigationView bottomNavigationView = (BottomNavigationView) findViewById(R.id.navigation);
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
@@ -58,9 +63,14 @@ public class MapsActivity extends FragmentActivity
                         break;
                     case R.id.action_sites:
                         Log.e("msg", "action sites clicked");
-                        setFragment(new SiteFragment());
-                        break;
 
+                        if (SITE_LATLNG == null) {
+                            Toast.makeText(MapsActivity.this, "Please select a site", Toast.LENGTH_SHORT).show();
+                            Log.e(TAG, "onNavigationItemSelected: Please select a site.");
+                        } else {
+                            setFragment(new SiteFragment());
+                        }
+                        break;
                     default:
                         break;
                 }
@@ -98,29 +108,10 @@ public class MapsActivity extends FragmentActivity
         // TODO: Execute Fragment change to MapFragment
         // Create new fragment and transaction
         Fragment newFragment = MapsFragment.newInstance(null, null);
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
 
-        // Replace whatever is in the fragment_container view with this fragment,
-        // and add the transaction to the back stack
-        transaction.replace(R.id.frame_container, newFragment);
-        transaction.addToBackStack(null);
-
-        // Commit the transaction
-        transaction.commit();
+        setFragment(newFragment);
     }
 
-    private boolean setNewFragment(Fragment fragment) {
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-
-        // Replace whatever is in the fragment_container view with this fragment,
-        // and add the transaction to the back stack
-        transaction.replace(R.id.fragment_holder, fragment);
-        transaction.addToBackStack(null);
-
-        // Commit the transaction
-        transaction.commit();
-        return true;
-    }
 
     @Override
     public void onFragmentInteraction(Uri uri) {

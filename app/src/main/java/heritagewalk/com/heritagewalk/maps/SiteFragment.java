@@ -225,7 +225,7 @@ public class SiteFragment extends android.support.v4.app.Fragment implements OnM
         DirectionsResult directions = null;
         googleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
 
-        siteLocation = new LatLng(SitePageActivity.latitude, SitePageActivity.longitude);
+        siteLocation = new LatLng(MapsActivity.SITE_LATLNG.latitude, MapsActivity.SITE_LATLNG.longitude);
         startingLocation = new LatLng(mMockLocationProvider.getLocationAt(0).getLatitude(), mMockLocationProvider.getLocationAt(0).getLongitude());
 
         if (ActivityCompat.checkSelfPermission(getContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) !=
