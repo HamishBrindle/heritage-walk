@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/action_explore"
+        android:enabled="true"
+        android:icon="@drawable/ic_explore"
+        android:title="@string/explore"
+        app:showAsAction="always" />
+
+    <item
+        android:id="@+id/action_sites"
+        android:enabled="true"
+        android:iconTint="#FFF"
+        android:icon="@drawable/ic_sites"
+        android:title="@string/site_walk"
+        app:showAsAction="always" />
+
+    <item
+        android:id="@+id/action_achievements"
+        android:enabled="true"
+        android:icon="@drawable/ic_achievements"
+        android:title="@string/achievements"
+        app:showAsAction="always" />
+</menu>
