@@ -3,6 +3,7 @@ package heritagewalk.com.heritagewalk.maps;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
@@ -13,6 +14,7 @@ import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.MenuItem;
 import android.widget.Toast;
+import android.widget.Toolbar;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -21,9 +23,7 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.maps.android.clustering.Cluster;
-import com.google.maps.android.clustering.ClusterItem;
 import com.google.maps.android.clustering.ClusterManager;
-import com.google.maps.android.clustering.algo.Algorithm;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -31,9 +31,9 @@ import java.util.Arrays;
 
 import heritagewalk.com.heritagewalk.R;
 import heritagewalk.com.heritagewalk.main.MainActivity;
-import heritagewalk.com.heritagewalk.models.Site;
 import heritagewalk.com.heritagewalk.maps.tasks.JSONParseAsyncTask;
 import heritagewalk.com.heritagewalk.maps.tasks.OnJSONParseCompleted;
+import heritagewalk.com.heritagewalk.models.Site;
 
 public class MapsActivity extends FragmentActivity
         implements OnMapReadyCallback, OnJSONParseCompleted,
@@ -58,7 +58,12 @@ public class MapsActivity extends FragmentActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            setActionBar(toolbar);
+        }
         BottomNavigationView bottomNavigationView = (BottomNavigationView) findViewById(R.id.navigation);
+        bottomNavigationView.setSelectedItemId(R.id.action_explore);
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
