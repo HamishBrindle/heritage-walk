@@ -48,8 +48,21 @@
     <string name="directions_api_key" templateMergeStrategy="preserve" translatable="false">
         AIzaSyCF2gB5CW6-mbmWeo_Gl0gaEaXRXOvX9o8
         <!--AIzaSyBTJxyENgXTKkXyH7FXhIMyeOJAPo56C8U-->
-
     </string>
+
+    <string name="permission_rationale">"Contacts permissions are needed for providing email
+        completions."
+    </string>
+
+    <!-- Strings related to login -->
+    <string name="prompt_email">Email</string>
+    <string name="prompt_password">Password</string>
+    <string name="action_sign_in">Sign in or register</string>
+    <string name="action_sign_in_short">Sign in</string>
+    <string name="error_invalid_email">This email address is invalid</string>
+    <string name="error_invalid_password">This password is too short</string>
+    <string name="error_incorrect_password">This password is incorrect</string>
+    <string name="error_field_required">This field is required</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
@@ -57,5 +70,21 @@
     <string name="site_walk">Select Site</string>
     <string name="achievements">Acheivements</string>
     <string name="home">Home</string>
+
+    <string name="font_name_gotham">gotham</string>
+    <string name="register_button">Register</string>
+    <string name="sign_in_button">Sign In</string>
+    <string name="login_register_description">Start Your Heritage Walk</string>
+    <string name="first_name">First Name</string>
+    <string name="last_name">Last Name</string>
+    <string name="prompt_confirm_password">Confirm Password</string>
+    <string name="form_remember_me">Remember Me</string>
+    <string name="submit_button">Submit</string>
+    <string name="google_button">Google Sign In</string>
+    <string name="password">Password</string>
+    <string name="good_morning_text">Good Morning</string>
+    <string name="good_afternoon_text">Good Afternoon</string>
+    <string name="good_evening_text">Good Evening</string>
+    <string name="google_request_token">1097770957398-v7soi0311kvfb6of64d1qakcgv0ve3a5.apps.googleusercontent.com</string>
 
 </resources>
