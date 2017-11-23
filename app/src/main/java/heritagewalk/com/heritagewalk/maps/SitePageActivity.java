@@ -56,7 +56,7 @@ public class SitePageActivity extends FragmentActivity implements SiteFragment.O
 
         setUpViews();
 
-        SiteFragment site = SiteFragment.newInstance();
+        site = SiteFragment.newInstance();
 
 //        // Construct a GeoDataClient.
         mGeoDataClient = Places.getGeoDataClient(this, null);
@@ -85,6 +85,10 @@ public class SitePageActivity extends FragmentActivity implements SiteFragment.O
     @Override
     public void onFragmentInteraction(Uri uri) {
 
+    }
+
+    public void findNearbyPlaces(View v){
+        site.findNearbyPlaces();
     }
 
 }

@@ -11,9 +11,12 @@
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.ACCESS_MOCK_LOCATION"/><!-- NEED TO GET RID OF THIS DURING PRODUCTION -->
+    <uses-permission android:name="android.permission.ACCESS_MOCK_LOCATION" />
 
-
+    <uses-feature
+        android:glEsVersion="0x00020000"
+        android:required="true" />
+    <!-- NEED TO GET RID OF THIS DURING PRODUCTION -->
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -21,7 +24,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        android:debuggable="true"><!-- NEED TO GET RID OF THIS DURING PRODUCTION -->
+        android:debuggable="true">
+        <!-- NEED TO GET RID OF THIS DURING PRODUCTION -->
 
 
         <!-- Meta Data -->
@@ -38,10 +42,14 @@
         <activity
             android:name=".main.MainActivity"
             android:label="@string/title_activity_main"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".maps.MapsActivity"
             android:label="@string/title_activity_maps" />
+
+        <activity android:name=".maps.tasks.PlacesActivity"
+            android:label="PlacesActivity"
+            android:theme="@style/AppTheme.NoActionBar"/>
 
         <!-- End of Activities -->
 
@@ -59,11 +67,7 @@
         <activity
             android:name=".maps.SitePageActivity"
             android:label="@string/title_activity_site_page"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
-
+            android:theme="@style/AppTheme.NoActionBar" />
     </application>
-    <uses-feature
-        android:glEsVersion="0x00020000"
-        android:required="true"
-        />
+
 </manifest>

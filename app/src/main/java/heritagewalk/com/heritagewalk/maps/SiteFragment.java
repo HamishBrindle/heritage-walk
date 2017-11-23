@@ -7,6 +7,7 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -46,8 +47,15 @@ import com.google.maps.model.DirectionsResult;
 import com.google.maps.model.TravelMode;
 
 import org.joda.time.DateTime;
+import org.json.JSONObject;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -68,7 +76,7 @@ public class SiteFragment extends Fragment implements OnMapReadyCallback,
         LocationListener {
 
     public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
-    GoogleMap mGoogleMap;
+    public GoogleMap mGoogleMap;
     MapView mMapView;
     View mView;
     GoogleApiClient mGoogleApiClient;
@@ -221,9 +229,10 @@ public class SiteFragment extends Fragment implements OnMapReadyCallback,
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
+        mGoogleMap = googleMap;
         getGeoContext();
         DirectionsResult directions = null;
-        googleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+        mGoogleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
 
         siteLocation = new LatLng(SitePageActivity.latitude, SitePageActivity.longitude);
         startingLocation = new LatLng(mMockLocationProvider.getLocationAt(0).getLatitude(), mMockLocationProvider.getLocationAt(0).getLongitude());
@@ -239,11 +248,12 @@ public class SiteFragment extends Fragment implements OnMapReadyCallback,
             //                                          int[] grantResults)
             // to handle the case where the user grants the permission. See the documentation
             // for ActivityCompat#requestPermissions for more details.
+
             return;
         }
-//        googleMap.addMarker(new MarkerOptions().position(siteLocation)).setTitle("hayyy");
+//        mGoogleMap.addMarker(new MarkerOptions().position(siteLocation)).setTitle("hayyy");
         CameraPosition startingPositionCamera = CameraPosition.builder().target(startingLocation).zoom(16).bearing(0).tilt(45).build();
-        googleMap.moveCamera(CameraUpdateFactory.newCameraPosition(startingPositionCamera));
+        mGoogleMap.moveCamera(CameraUpdateFactory.newCameraPosition(startingPositionCamera));
 
 
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -251,12 +261,12 @@ public class SiteFragment extends Fragment implements OnMapReadyCallback,
                     android.Manifest.permission.ACCESS_FINE_LOCATION)
                     == PackageManager.PERMISSION_GRANTED) {
                 buildGoogleApiClient();
-                googleMap.setMyLocationEnabled(true);
+                mGoogleMap.setMyLocationEnabled(true);
             }
         }
         else {
             buildGoogleApiClient();
-            googleMap.setMyLocationEnabled(true);
+            mGoogleMap.setMyLocationEnabled(true);
         }
 
         try {
@@ -269,8 +279,8 @@ public class SiteFragment extends Fragment implements OnMapReadyCallback,
         } catch (IOException e) {
             e.printStackTrace();
         }
-        addMarkersToMap(directions, googleMap);
-        addPolyline(directions, googleMap);
+        addMarkersToMap(directions, mGoogleMap);
+        addPolyline(directions, mGoogleMap);
     }
 
     private DirectionsResult getDirections(GeoApiContext mGeoApiContext, LatLng origin, LatLng destination)
@@ -491,5 +501,165 @@ public class SiteFragment extends Fragment implements OnMapReadyCallback,
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
+    }
+
+
+
+    // -- Places --
+    public StringBuilder sbMethod() {
+
+        //use your current location here
+        double mLatitude = 49.212719;
+        double mLongitude = -122.919485;
+
+        StringBuilder sb = new StringBuilder("https://maps.googleapis.com/maps/api/place/nearbysearch/json?");
+        sb.append("location=" + mLatitude + "," + mLongitude);
+        sb.append("&radius=5000");
+        sb.append("&types=" + "restaurant");
+        sb.append("&sensor=true");
+        sb.append("&key=" + R.string.google_maps_key);
+
+        Log.d("Map", "api: " + sb.toString());
+
+        return sb;
+    }
+
+    private class PlacesTask extends AsyncTask<String, Integer, String> {
+
+        String data = null;
+
+        // Invoked by execute() method of this object
+        @Override
+        protected String doInBackground(String... url) {
+            try {
+                data = downloadUrl(url[0]);
+            } catch (Exception e) {
+                Log.d("Background Task", e.toString());
+            }
+            return data;
+        }
+
+        // Executed after the complete execution of doInBackground() method
+        @Override
+        protected void onPostExecute(String result) {
+            ParserTask parserTask = new ParserTask();
+
+            // Start parsing the Google places in JSON format
+            // Invokes the "doInBackground()" method of the class ParserTask
+            parserTask.execute(result);
+        }
+    }
+
+    private String downloadUrl(String strUrl) throws IOException {
+        String data = "";
+        InputStream iStream = null;
+        HttpURLConnection urlConnection = null;
+        try {
+            URL url = new URL(strUrl);
+
+            // Creating an http connection to communicate with url
+            urlConnection = (HttpURLConnection) url.openConnection();
+
+            // Connecting to url
+            urlConnection.connect();
+
+            // Reading data from url
+            iStream = urlConnection.getInputStream();
+
+            BufferedReader br = new BufferedReader(new InputStreamReader(iStream));
+
+            StringBuffer sb = new StringBuffer();
+
+            String line = "";
+            while ((line = br.readLine()) != null) {
+                sb.append(line);
+            }
+
+            data = sb.toString();
+
+            br.close();
+
+        } catch (Exception e) {
+            Log.d("Exception while dl url", e.toString());
+        } finally {
+            iStream.close();
+            urlConnection.disconnect();
+        }
+        return data;
+    }
+
+    private class ParserTask extends AsyncTask<String, Integer, List<HashMap<String, String>>> {
+
+        JSONObject jObject;
+
+        // Invoked by execute() method of this object
+        @Override
+        protected List<HashMap<String, String>> doInBackground(String... jsonData) {
+
+            List<HashMap<String, String>> places = null;
+            Place_JSON placeJson = new Place_JSON();
+
+            try {
+                jObject = new JSONObject(jsonData[0]);
+
+                places = placeJson.parse(jObject);
+
+            } catch (Exception e) {
+                Log.d("Exception", e.toString());
+            }
+            return places;
+        }
+
+        // Executed after the complete execution of doInBackground() method
+        @Override
+        protected void onPostExecute(List<HashMap<String, String>> list) {
+
+            Log.d("Map", "list size: " + list.size());
+            // Clears all the existing markers;
+            mGoogleMap.clear();
+
+            for (int i = 0; i < list.size(); i++) {
+
+                // Creating a marker
+                MarkerOptions markerOptions = new MarkerOptions();
+
+                // Getting a place from the places list
+                HashMap<String, String> hmPlace = list.get(i);
+
+
+                // Getting latitude of the place
+                double lat = Double.parseDouble(hmPlace.get("lat"));
+
+                // Getting longitude of the place
+                double lng = Double.parseDouble(hmPlace.get("lng"));
+
+                // Getting name
+                String name = hmPlace.get("place_name");
+
+                Log.d("Map", "place: " + name);
+
+                // Getting vicinity
+                String vicinity = hmPlace.get("vicinity");
+
+                LatLng latLng = new LatLng(lat, lng);
+
+                // Setting the position for the marker
+                markerOptions.position(latLng);
+
+                markerOptions.title(name + " : " + vicinity);
+
+                markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA));
+
+                // Placing a marker on the touched position
+                Marker m = mGoogleMap.addMarker(markerOptions);
+
+            }
+        }
+    }
+
+    public void findNearbyPlaces(){
+        StringBuilder sbValue = new StringBuilder(sbMethod());
+        PlacesTask placesTask = new PlacesTask();
+        placesTask.execute(sbValue.toString());
     }
 }
