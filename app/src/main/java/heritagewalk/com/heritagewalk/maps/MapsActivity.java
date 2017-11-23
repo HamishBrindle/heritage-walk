@@ -5,10 +5,13 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
+import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -27,6 +30,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import heritagewalk.com.heritagewalk.R;
+import heritagewalk.com.heritagewalk.main.MainActivity;
 import heritagewalk.com.heritagewalk.models.Site;
 import heritagewalk.com.heritagewalk.maps.tasks.JSONParseAsyncTask;
 import heritagewalk.com.heritagewalk.maps.tasks.OnJSONParseCompleted;
@@ -48,11 +52,41 @@ public class MapsActivity extends FragmentActivity
     private GoogleMap mMap;
     private ArrayList<Site> mHeritageSites;
     private ClusterManager<Site> mClusterManager;
+    private boolean isSiteSelected;
+    private Site siteSelected;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
+        BottomNavigationView bottomNavigationView = (BottomNavigationView) findViewById(R.id.navigation);
+        bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                FragmentManager fm = getSupportFragmentManager();
+                switch (item.getItemId()) {
+
+                    case R.id.action_home:
+                        Log.e("msg", "action explore clicked");
+                        Intent mainActivity = new Intent(MapsActivity.this, MainActivity.class);
+                        startActivity(mainActivity);
+                        break;
+                    case R.id.action_explore:
+                        break;
+                    case R.id.action_sites:
+                        if (isSiteSelected) {
+                            startNewSiteActivity(siteSelected);
+                        }
+                        break;
+                    case R.id.action_achievements:
+                        break;
+                    default:
+                        break;
+                }
+
+                return true;
+            }
+        });
 
         // Obtain data from JSON (later calls AddMarkersAsyncTask)
         // This is basically what kicks everything off.
@@ -179,7 +213,8 @@ public class MapsActivity extends FragmentActivity
                 Log.d("newTag",marker.getTitle());
                 for(Site site : mHeritageSites) {
                     if(marker.getTitle().equals(site.getName())) {
-                        startNewSiteActivity(site);
+                        isSiteSelected = true;
+                        siteSelected = site;
                     }
                 }
                 Toast.makeText(MapsActivity.this, "Info Window", Toast.LENGTH_SHORT).show();
