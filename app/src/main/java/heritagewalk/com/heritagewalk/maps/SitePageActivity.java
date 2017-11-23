@@ -1,11 +1,14 @@
 package heritagewalk.com.heritagewalk.maps;
 
-
 import com.google.android.gms.location.places.GeoDataClient;
 import com.google.android.gms.location.places.Places;
 import com.google.android.gms.location.places.PlaceDetectionClient;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
@@ -15,16 +18,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 
-import android.app.Activity;
 import android.content.Intent;
-import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
@@ -43,9 +37,8 @@ import java.util.HashMap;
 import java.util.List;
 
 import heritagewalk.com.heritagewalk.R;
-import heritagewalk.com.heritagewalk.models.Site;
 
-public class SitePageActivity extends FragmentActivity implements SiteFragment.OnFragmentInteractionListener {
+public class SitePageActivity extends FragmentActivity implements OnMapReadyCallback{
     protected GeoDataClient mGeoDataClient;
     protected PlaceDetectionClient mPlaceDetectionClient;
     protected String sitePosition;
@@ -53,13 +46,13 @@ public class SitePageActivity extends FragmentActivity implements SiteFragment.O
     protected String siteDescription;
     protected String siteSummary;
 
-    protected SiteFragment site;
     static float latitude;
     static float longitude;
 
     private TextView siteTitle;
 
     protected GoogleMap mGoogleMap;
+    protected LatLngBounds mLatLngBounds;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,10 +65,9 @@ public class SitePageActivity extends FragmentActivity implements SiteFragment.O
         String[] latlong = sitePosition.split(",");
         latitude = convertStringToFloat(latlong[0]);
         longitude = convertStringToFloat(latlong[1]);
+        mLatLngBounds = new LatLngBounds(new LatLng(latitude,longitude), new LatLng(latitude + 0.0001, longitude + 0.0001));
 
         setUpViews();
-
-        site = SiteFragment.newInstance();
 //
 ////        // Construct a GeoDataClient.
 //        mGeoDataClient = Places.getGeoDataClient(this, null);
@@ -91,6 +83,10 @@ public class SitePageActivity extends FragmentActivity implements SiteFragment.O
     }
 
     private void setUpViews() {
+        //Set up googlemapsfragment
+        SupportMapFragment mapFrag = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
+        mapFrag.getMapAsync(this);
+
         TextView siteTitleView = findViewById(R.id.siteTitle);
         siteTitleView.setText(siteName);
 
@@ -101,9 +97,13 @@ public class SitePageActivity extends FragmentActivity implements SiteFragment.O
         String BUSINESS_PROMPT = "Come check out these businesses!";
         businessPromptView.setText(BUSINESS_PROMPT);
     }
-    @Override
-    public void onFragmentInteraction(Uri uri) {
 
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+        mGoogleMap = googleMap;
+        mGoogleMap.setMaxZoomPreference(15.0f);
+        mGoogleMap.addMarker(new MarkerOptions().position(new LatLng(latitude,longitude)).title(siteName));
+        mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mLatLngBounds.getCenter(), 15));
     }
 
     public void findNearbyPlaces(View v){
@@ -115,12 +115,9 @@ public class SitePageActivity extends FragmentActivity implements SiteFragment.O
     // -- Places --
     public StringBuilder sbMethod() {
 
-        //use your current location here
-        double mLatitude = 49.212719;
-        double mLongitude = -122.919485;
 
         StringBuilder sb = new StringBuilder("https://maps.googleapis.com/maps/api/place/nearbysearch/json?");
-        sb.append("location=" + mLatitude + "," + mLongitude);
+        sb.append("location=" + latitude + "," + longitude);
         sb.append("&radius=5000");
         sb.append("&types=" + "restaurant");
         sb.append("&sensor=true");
@@ -130,6 +127,8 @@ public class SitePageActivity extends FragmentActivity implements SiteFragment.O
 
         return sb;
     }
+
+
 
     private class PlacesTask extends AsyncTask<String, Integer, String> {
 
@@ -220,8 +219,6 @@ public class SitePageActivity extends FragmentActivity implements SiteFragment.O
         // Executed after the complete execution of doInBackground() method
         @Override
         protected void onPostExecute(List<HashMap<String, String>> list) {
-
-            mGoogleMap = site.mGoogleMap;
 
             Log.d("Map", "list size: " + list.size());
             // Clears all the existing markers;
