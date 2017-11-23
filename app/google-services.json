@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "1097770957398-6pir7l78ic1s6ut1e6t39amsb64snngq.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "heritagewalk.com.heritagewalk",
+            "certificate_hash": "6578171cbba5581a8ce5a0707fe491cb680346bb"
+          }
+        },
+        {
           "client_id": "1097770957398-1uv6dpe9jvp0hi1or6pt4ovorfn97mvt.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
