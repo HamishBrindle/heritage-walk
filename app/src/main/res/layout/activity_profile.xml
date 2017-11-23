@@ -1,0 +1,129 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                tools:context="heritagewalk.com.heritagewalk.maps.MapsActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_centerVertical="true"
+        android:orientation="vertical">
+
+        <!-- Start of Logo & Wordmark -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="vertical">
+
+        </LinearLayout>
+        <!-- End of Logo & Wordmark -->
+
+        <!-- Start of Form Fields and Buttons -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="48dp"
+            android:layout_marginRight="48dp"
+            android:layout_marginTop="48dp"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <!-- Start of Postal Code -->
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <EditText
+                    android:id="@+id/form_postal_code"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Postal Code"
+                    android:inputType="textCapCharacters"
+                    android:textColor="@color/colorAccent"
+                    android:textSize="14sp"/>
+
+            </android.support.design.widget.TextInputLayout>
+            <!-- End of Postal Code -->
+
+            <!-- Start of Age -->
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <EditText
+                    android:id="@+id/form_age"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Age"
+                    android:inputType="number"
+                    android:textSize="14sp"/>
+
+            </android.support.design.widget.TextInputLayout>
+            <!-- End of Age -->
+
+            <!-- Start of Gender -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_marginLeft="4dp"
+                android:layout_marginRight="4dp"
+                android:background="@drawable/misc_underline"
+                android:weightSum="2">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginBottom="4dp"
+                    android:layout_weight="1"
+                    android:gravity="bottom"
+                    android:text="Gender"/>
+
+                <Spinner
+                    android:id="@+id/form_gender_spinner"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="right"
+                    android:layout_marginBottom="4dp"
+                    android:layout_weight="1"
+                    android:textAlignment="center"/>
+
+            </LinearLayout>
+            <!-- End of Gender -->
+
+            <!-- Start of Weight -->
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <EditText
+                    android:id="@+id/form_weight"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Weight (lbs)"
+                    android:inputType="numberDecimal"
+                    android:textSize="14sp"/>
+
+            </android.support.design.widget.TextInputLayout>
+            <!-- End of Weight -->
+
+            <!-- Submit Button -->
+            <Button
+                android:id="@+id/form_button_next"
+                android:layout_width="170dp"
+                android:layout_height="40dp"
+                android:layout_marginTop="16dp"
+                android:background="@drawable/button_register"
+                android:text="Next"/>
+
+        </LinearLayout>
+        <!-- End of Form Fields and Buttons -->
+
+    </LinearLayout>
+    <!-- End of Main Content -->
+
+</RelativeLayout>

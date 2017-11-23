@@ -20,6 +20,7 @@ import com.google.firebase.auth.FirebaseUser;
 
 import heritagewalk.com.heritagewalk.R;
 import heritagewalk.com.heritagewalk.auth.LoginActivity;
+import heritagewalk.com.heritagewalk.game.AchievementsActivity;
 import heritagewalk.com.heritagewalk.maps.MapsActivity;
 
 public class MainActivity extends AppCompatActivity
@@ -70,6 +71,19 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onClick(View v) {
                 mAuth.signOut();
+            }
+        });
+        findViewById(R.id.achievement_button).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // TODO: Give achievement
+            }
+        });
+        findViewById(R.id.achievement_page_button).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getBaseContext(), AchievementsActivity.class);
+                startActivity(intent);
             }
         });
         // End of debug buttons

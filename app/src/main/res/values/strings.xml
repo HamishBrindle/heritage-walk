@@ -86,5 +86,6 @@
     <string name="good_afternoon_text">Good Afternoon</string>
     <string name="good_evening_text">Good Evening</string>
     <string name="google_request_token">1097770957398-v7soi0311kvfb6of64d1qakcgv0ve3a5.apps.googleusercontent.com</string>
+    <string name="title_activity_achievements">AchievementsActivity</string>
 
 </resources>

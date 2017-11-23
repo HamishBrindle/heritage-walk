@@ -16,11 +16,27 @@
         android:text="@string/button_open_map"/>
 
     <Button
-        android:id="@+id/logout_button"
+        android:id="@+id/signin_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
         android:text="Logout"
         android:layout_below="@+id/maps_button"/>
+
+    <Button
+        android:id="@+id/achievement_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:text="Give Achievement"
+        android:layout_below="@+id/logout_button"/>
+
+    <Button
+        android:id="@+id/achievement_page_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:text="View Achievements"
+        android:layout_below="@+id/achievement_button"/>
 
 </RelativeLayout>
