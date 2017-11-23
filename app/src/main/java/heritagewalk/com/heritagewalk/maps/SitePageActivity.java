@@ -54,6 +54,7 @@ public class SitePageActivity extends FragmentActivity implements SiteFragment.O
         latitude = convertStringToFloat(latlong[0]);
         longitude = convertStringToFloat(latlong[1]);
 
+
         setUpViews();
 
         SiteFragment site = SiteFragment.newInstance();
@@ -66,6 +67,7 @@ public class SitePageActivity extends FragmentActivity implements SiteFragment.O
 
         // TODO: Start using the Places API.
     }
+
 
     private float convertStringToFloat (String toConvert) {
         return Float.parseFloat(toConvert.replaceAll("[^\\d-.]", ""));
