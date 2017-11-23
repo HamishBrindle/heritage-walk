@@ -87,4 +87,20 @@
     <string name="good_evening_text">Good Evening</string>
     <string name="google_request_token">1097770957398-v7soi0311kvfb6of64d1qakcgv0ve3a5.apps.googleusercontent.com</string>
 
+    <string name="font_name_gotham">gotham</string>
+    <string name="register_button">Register</string>
+    <string name="sign_in_button">Sign In</string>
+    <string name="login_register_description">Start Your Heritage Walk</string>
+    <string name="first_name">First Name</string>
+    <string name="last_name">Last Name</string>
+    <string name="prompt_confirm_password">Confirm Password</string>
+    <string name="form_remember_me">Remember Me</string>
+    <string name="submit_button">Submit</string>
+    <string name="google_button">Google Sign In</string>
+    <string name="password">Password</string>
+    <string name="good_morning_text">Good Morning</string>
+    <string name="good_afternoon_text">Good Afternoon</string>
+    <string name="good_evening_text">Good Evening</string>
+    <string name="google_request_token">1097770957398-v7soi0311kvfb6of64d1qakcgv0ve3a5.apps.googleusercontent.com</string>
+
 </resources>
