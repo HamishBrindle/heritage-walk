@@ -19,6 +19,7 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 
 import android.content.Intent;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
@@ -38,7 +39,7 @@ import java.util.List;
 
 import heritagewalk.com.heritagewalk.R;
 
-public class SitePageActivity extends FragmentActivity implements OnMapReadyCallback{
+public class SitePageActivity extends AppCompatActivity implements OnMapReadyCallback{
     protected GeoDataClient mGeoDataClient;
     protected PlaceDetectionClient mPlaceDetectionClient;
     protected String sitePosition;
