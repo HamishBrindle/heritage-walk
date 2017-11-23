@@ -52,7 +52,6 @@ public class MapsActivity extends FragmentActivity
     private GoogleMap mMap;
     private ArrayList<Site> mHeritageSites;
     private ClusterManager<Site> mClusterManager;
-    private boolean isSiteSelected;
     private Site siteSelected;
 
     @Override
@@ -65,7 +64,6 @@ public class MapsActivity extends FragmentActivity
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 FragmentManager fm = getSupportFragmentManager();
                 switch (item.getItemId()) {
-
                     case R.id.action_home:
                         Log.e("msg", "action explore clicked");
                         Intent mainActivity = new Intent(MapsActivity.this, MainActivity.class);
@@ -74,7 +72,7 @@ public class MapsActivity extends FragmentActivity
                     case R.id.action_explore:
                         break;
                     case R.id.action_sites:
-                        if (isSiteSelected) {
+                        if (siteSelected != null) {
                             startNewSiteActivity(siteSelected);
                         }
                         break;
@@ -213,7 +211,6 @@ public class MapsActivity extends FragmentActivity
                 Log.d("newTag",marker.getTitle());
                 for(Site site : mHeritageSites) {
                     if(marker.getTitle().equals(site.getName())) {
-                        isSiteSelected = true;
                         siteSelected = site;
                     }
                 }
