@@ -118,10 +118,11 @@ public class SitePageActivity extends FragmentActivity implements OnMapReadyCall
 
         StringBuilder sb = new StringBuilder("https://maps.googleapis.com/maps/api/place/nearbysearch/json?");
         sb.append("location=" + latitude + "," + longitude);
-        sb.append("&radius=5000");
+        sb.append("&radius=1000");
         sb.append("&types=" + "restaurant");
         sb.append("&sensor=true");
-        sb.append("&key=" + R.string.google_maps_key);
+        sb.append("&key=" + "AIzaSyC0jBiaFqbQytOt_KPExxKL8GRrEYiQgJY");
+
 
         Log.d("Map", "api: " + sb.toString());
 
