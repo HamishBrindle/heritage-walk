@@ -24,7 +24,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+
         <!-- NEED TO GET RID OF THIS DURING PRODUCTION -->
+
 
         <!-- Meta Data -->
         <meta-data
@@ -34,6 +36,7 @@
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version"/>
         <!-- End of Meta Data -->
+
 
         <!-- Activities -->
         <activity
@@ -71,7 +74,6 @@
             android:name=".auth.LoginRegisterActivity"
             android:launchMode="singleTask"
             android:screenOrientation="portrait">
-
         </activity>
         <activity
             android:name=".auth.RegisterActivity"
@@ -82,6 +84,11 @@
             android:name=".auth.BeginActivity"
             android:launchMode="singleTask"
             android:screenOrientation="portrait">
+        </activity>
+        <activity
+            android:name=".game.AchievementsActivity"
+            android:label="@string/title_activity_achievements"
+            android:theme="@style/AppTheme">
         </activity>
     </application>
 

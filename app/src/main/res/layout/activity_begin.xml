@@ -1,0 +1,69 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                tools:context="heritagewalk.com.heritagewalk.maps.MapsActivity" >
+
+    <!-- Start of Main Content -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_centerVertical="true"
+        android:layout_alignParentStart="true">
+
+        <!-- Start of Logo & Wordmark -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="vertical">
+
+
+        </LinearLayout>
+        <!-- End of Logo & Wordmark -->
+
+        <!-- Start of Greeting & User name -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="40dp"
+            android:orientation="vertical">
+
+            <!-- Timely Greeting -->
+            <TextView
+                android:id="@+id/greeting"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="18sp"
+                android:font="@font/gotham_bold"/>
+
+            <!-- User Name -->
+            <TextView
+                android:id="@+id/user_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:textSize="22sp"
+                android:font="@font/gotham_bold"/>
+
+        </LinearLayout>
+        <!-- End of Greeting & User name -->
+
+        <!-- Submit Button -->
+        <Button
+            android:id="@+id/button_begin"
+            android:layout_width="170dp"
+            android:layout_height="40dp"
+            android:layout_gravity="center"
+            android:layout_marginTop="48dp"
+            android:background="@drawable/button_signin"
+            android:text="Let's Begin!"/>
+
+    </LinearLayout>
+    <!-- End of Main Content -->
+
+</RelativeLayout>
