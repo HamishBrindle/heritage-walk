@@ -9,12 +9,12 @@
     android:weightSum="10"
     tools:showIn="@layout/activity_site_page">
 
-    <fragment
-        android:name="heritagewalk.com.heritagewalk.maps.SiteFragment"
-        android:id="@+id/mapview"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="5"/>
+    <!--<fragment-->
+        <!--android:name="heritagewalk.com.heritagewalk.maps.SiteFragment"-->
+        <!--android:id="@+id/mapview"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="0dp"-->
+        <!--android:layout_weight="5"/>-->
 
     <TextView
         android:id="@+id/siteTitle"

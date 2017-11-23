@@ -5,7 +5,7 @@
     tools:context="heritagewalk.com.heritagewalk.maps.SiteFragment">
 
     <com.google.android.gms.maps.MapView
-        android:id="@+id/mapview"
+        android:id="@+id/mapview1"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
