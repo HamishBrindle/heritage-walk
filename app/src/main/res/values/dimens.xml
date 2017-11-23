@@ -10,19 +10,7 @@
     <dimen name="icon_bottom_margin">24dp</dimen>
     <dimen name="title_bottom_margin">16dp</dimen>
     <dimen name="field_width_standard">160dp</dimen>
-
-    <dimen name="menu_icon_padding">25dp</dimen>
-    <dimen name="menu_icon_corner_radius">25dp</dimen>
+    <dimen name="menu_icon_corner_radius">10dp</dimen>
     <dimen name="button_corner_radius">10dp</dimen>
-    <dimen name="menu_icon_dimensions">100dp</dimen>
-    <dimen name="h3_font_size">17sp</dimen>
-    <dimen name="alerts_add_remove_buttons_size">50dp</dimen>
-    <dimen name="register_login_logo_dim">50dp</dimen>
-    <dimen name="vitals_scrollview_margin">50dp</dimen>
-    <dimen name="connect_scrollview_margin">50dp</dimen>
-    <dimen name="vitals_header_textSize">20sp</dimen>
-    <dimen name="section_spacing">20dp</dimen>
-    <dimen name="vitals_symbol_size">30dp</dimen>
-    <dimen name="page_margin_side">30dp</dimen>
 
 </resources>
