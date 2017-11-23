@@ -89,5 +89,6 @@
     <string name="title_activity_achievements">AchievementsActivity</string>
     <string name="title_activity_navigation">NavigationActivity</string>
     <string name="action_logout">Logout</string>
+    <string name="heritage_walk_logo">Heritage Walk Logo</string>
 
 </resources>
