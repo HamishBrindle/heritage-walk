@@ -9,11 +9,11 @@
     tools:showIn="@layout/activity_site_page">
 
     <fragment
-        android:name="heritagewalk.com.heritagewalk.maps.SiteFragment"
-        android:id="@+id/mapview"
+        android:id="@+id/map"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="5"/>
+        android:layout_height="wrap_content"
+        android:layout_weight="5"
+        class="com.google.android.gms.maps.SupportMapFragment"/>
 
     <TextView
         android:id="@+id/siteTitle"
@@ -32,6 +32,12 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="testing"
+        android:onClick="findNearbyPlaces"/>
 
     <LinearLayout
         android:id="@+id/listOfBusinesses"

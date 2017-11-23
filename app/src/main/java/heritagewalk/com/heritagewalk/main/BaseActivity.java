@@ -14,7 +14,6 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
@@ -82,12 +81,15 @@ public class BaseActivity extends AppCompatActivity
         mBottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                Intent intent;
                 switch (item.getItemId()) {
                     case R.id.action_home:
-                        Intent mainActivity = new Intent(getApplicationContext(), MainActivity.class);
-                        startActivity(mainActivity);
+                        intent = new Intent(getApplicationContext(), MainActivity.class);
+                        startActivity(intent);
                         break;
                     case R.id.action_explore:
+                        intent = new Intent(getApplicationContext(), MapsActivity.class);
+                        startActivity(intent);
                         Toast.makeText(getApplicationContext(), "Explore Clicked", Toast.LENGTH_SHORT).show();
                         break;
                     case R.id.action_sites:
