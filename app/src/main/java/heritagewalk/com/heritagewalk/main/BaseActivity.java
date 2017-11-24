@@ -90,7 +90,6 @@ public class BaseActivity extends AppCompatActivity
                     case R.id.action_explore:
                         intent = new Intent(getApplicationContext(), MapsActivity.class);
                         startActivity(intent);
-                        Toast.makeText(getApplicationContext(), "Explore Clicked", Toast.LENGTH_SHORT).show();
                         break;
                     case R.id.action_sites:
                         Toast.makeText(getApplicationContext(), "Sites Clicked", Toast.LENGTH_SHORT).show();
@@ -105,6 +104,12 @@ public class BaseActivity extends AppCompatActivity
                 return true;
             }
         });
+    }
+
+    public void selectCurrentIcon(int id) {
+        if (mBottomNavigationView != null) {
+            mBottomNavigationView.setSelectedItemId(id);
+        }
     }
 
     @Override

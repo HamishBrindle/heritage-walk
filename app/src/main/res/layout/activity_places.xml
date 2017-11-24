@@ -4,6 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="heritagewalk.com.heritagewalk.maps.tasks.PlacesActivity">
+    tools:context="heritagewalk.com.heritagewalk.maps.PlacesActivity">
 
 </android.support.constraint.ConstraintLayout>

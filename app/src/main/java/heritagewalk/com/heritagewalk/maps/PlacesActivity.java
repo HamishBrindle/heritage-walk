@@ -1,10 +1,10 @@
-package heritagewalk.com.heritagewalk.maps.tasks;
+package heritagewalk.com.heritagewalk.maps;
+
+import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
 
 import com.google.android.gms.location.places.GeoDataClient;
 import com.google.android.gms.location.places.Places;
-import com.google.android.gms.location.places.PlaceDetectionClient;
-import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
 
 import heritagewalk.com.heritagewalk.R;
 

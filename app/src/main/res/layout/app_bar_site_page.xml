@@ -1,37 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                xmlns:app="http://schemas.android.com/apk/res-auto"
-                xmlns:tools="http://schemas.android.com/tools"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                tools:context="heritagewalk.com.heritagewalk.main.MainActivity">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="heritagewalk.com.heritagewalk.main.MainActivity">
 
-    <android.support.design.widget.AppBarLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:theme="@style/AppTheme.AppBarOverlay">
+    <include layout="@layout/layout_toolbar" />
 
-        <Toolbar
-            android:id="@+id/toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="@drawable/bottom_nav_background"
-            app:popupTheme="@style/AppTheme.PopupOverlay"/>
+    <include layout="@layout/content_site_page" />
 
-    </android.support.design.widget.AppBarLayout>
-
-    <include layout="@layout/content_site_page"/>
-
-    <android.support.design.widget.BottomNavigationView
-        android:id="@+id/navigation"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_gravity="start"
-        app:itemIconTint="@android:color/white"
-        app:itemTextColor="@android:color/white"
-        app:menu="@menu/activity_maps_bottom_navigation"
-        android:background="@drawable/bottom_nav_background"/>
+    <include layout="@layout/layout_bottom_navigation" />
 
 </RelativeLayout>

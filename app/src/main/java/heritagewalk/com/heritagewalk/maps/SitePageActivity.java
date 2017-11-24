@@ -1,9 +1,16 @@
 package heritagewalk.com.heritagewalk.maps;
 
+import android.content.Intent;
+import android.os.AsyncTask;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
+import android.widget.TextView;
+
 import com.google.android.gms.location.places.GeoDataClient;
-import com.google.android.gms.location.places.Places;
 import com.google.android.gms.location.places.PlaceDetectionClient;
 import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
@@ -11,20 +18,6 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-
-import android.app.Fragment;
-import android.net.Uri;
-import android.os.AsyncTask;
-import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
-
-import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
-import android.view.View;
-import android.widget.TextView;
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.MapView;
 
 import org.json.JSONObject;
 
@@ -38,8 +31,10 @@ import java.util.HashMap;
 import java.util.List;
 
 import heritagewalk.com.heritagewalk.R;
+import heritagewalk.com.heritagewalk.main.BaseActivity;
+import heritagewalk.com.heritagewalk.models.Place;
 
-public class SitePageActivity extends AppCompatActivity implements OnMapReadyCallback{
+public class SitePageActivity extends BaseActivity implements OnMapReadyCallback {
     protected GeoDataClient mGeoDataClient;
     protected PlaceDetectionClient mPlaceDetectionClient;
     protected String sitePosition;
@@ -58,7 +53,7 @@ public class SitePageActivity extends AppCompatActivity implements OnMapReadyCal
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_site_page);
+
         Intent intent = getIntent();
         siteName = intent.getStringExtra("selectedSiteName");
         sitePosition = intent.getStringExtra("selectedSiteLatLng");
@@ -66,26 +61,18 @@ public class SitePageActivity extends AppCompatActivity implements OnMapReadyCal
         String[] latlong = sitePosition.split(",");
         latitude = convertStringToFloat(latlong[0]);
         longitude = convertStringToFloat(latlong[1]);
-        mLatLngBounds = new LatLngBounds(new LatLng(latitude,longitude), new LatLng(latitude + 0.0001, longitude + 0.0001));
+        mLatLngBounds = new LatLngBounds(new LatLng(latitude, longitude), new LatLng(latitude + 0.0001, longitude + 0.0001));
 
         setUpViews();
-//
-////        // Construct a GeoDataClient.
-//        mGeoDataClient = Places.getGeoDataClient(this, null);
-////
-////        // Construct a PlaceDetectionClient.
-//        mPlaceDetectionClient = Places.getPlaceDetectionClient(this, null);
-//
-//        // TODO: Start using the Places API.
     }
 
-    private float convertStringToFloat (String toConvert) {
+    private float convertStringToFloat(String toConvert) {
         return Float.parseFloat(toConvert.replaceAll("[^\\d-.]", ""));
     }
 
     private void setUpViews() {
         //Set up googlemapsfragment
-        SupportMapFragment mapFrag = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
+        SupportMapFragment mapFrag = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.googleMap);
         mapFrag.getMapAsync(this);
 
         TextView siteTitleView = findViewById(R.id.siteTitle);
@@ -103,11 +90,11 @@ public class SitePageActivity extends AppCompatActivity implements OnMapReadyCal
     public void onMapReady(GoogleMap googleMap) {
         mGoogleMap = googleMap;
         mGoogleMap.setMaxZoomPreference(15.0f);
-        mGoogleMap.addMarker(new MarkerOptions().position(new LatLng(latitude,longitude)).title(siteName));
+        mGoogleMap.addMarker(new MarkerOptions().position(new LatLng(latitude, longitude)).title(siteName));
         mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mLatLngBounds.getCenter(), 15));
     }
 
-    public void findNearbyPlaces(View v){
+    public void findNearbyPlaces(View v) {
         StringBuilder sbValue = new StringBuilder(sbMethod());
         PlacesTask placesTask = new PlacesTask();
         placesTask.execute(sbValue.toString());
@@ -116,7 +103,6 @@ public class SitePageActivity extends AppCompatActivity implements OnMapReadyCal
     // -- Places --
     public StringBuilder sbMethod() {
 
-
         StringBuilder sb = new StringBuilder("https://maps.googleapis.com/maps/api/place/nearbysearch/json?");
         sb.append("location=" + latitude + "," + longitude);
         sb.append("&radius=1000");
@@ -124,16 +110,12 @@ public class SitePageActivity extends AppCompatActivity implements OnMapReadyCal
         sb.append("&sensor=true");
         sb.append("&key=" + "AIzaSyC0jBiaFqbQytOt_KPExxKL8GRrEYiQgJY");
 
-
         Log.d("Map", "api: " + sb.toString());
 
         return sb;
     }
 
-
-
     private class PlacesTask extends AsyncTask<String, Integer, String> {
-
         String data = null;
 
         // Invoked by execute() method of this object
@@ -205,7 +187,7 @@ public class SitePageActivity extends AppCompatActivity implements OnMapReadyCal
         protected List<HashMap<String, String>> doInBackground(String... jsonData) {
 
             List<HashMap<String, String>> places = null;
-            Place_JSON placeJson = new Place_JSON();
+            Place placeJson = new Place();
 
             try {
                 jObject = new JSONObject(jsonData[0]);
@@ -265,5 +247,9 @@ public class SitePageActivity extends AppCompatActivity implements OnMapReadyCal
         }
     }
 
+    @Override
+    public int getLayout() {
+        return R.layout.activity_site_page;
+    }
 }
 

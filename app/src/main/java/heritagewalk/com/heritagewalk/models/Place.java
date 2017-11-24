@@ -1,4 +1,4 @@
-package heritagewalk.com.heritagewalk.maps;
+package heritagewalk.com.heritagewalk.models;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -12,7 +12,7 @@ import java.util.List;
  * Created by Wei on 11/22/2017.
  */
 
-public class Place_JSON {
+public class Place {
 
     /**
      * Receives a JSONObject and returns a list

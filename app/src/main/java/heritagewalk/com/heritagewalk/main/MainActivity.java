@@ -15,9 +15,17 @@ public class MainActivity extends BaseActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // Select current activity on the BottomNavigationView
+        selectCurrentIcon(R.id.action_home);
+
+        // Setup some debug buttons
         setupDebugButtons();
     }
 
+    /**
+     * Setup all the debug UI elements for this activity.
+     */
     private void setupDebugButtons() {
         findViewById(R.id.maps_button).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -40,8 +48,23 @@ public class MainActivity extends BaseActivity
         });
     }
 
+    /**
+     * Called by parent, BaseActivity. Used in order for BaseActivity to determine which
+     * layout to use.
+     * @return  this layout's ID
+     */
     @Override
     public int getLayout() {
         return R.layout.activity_main;
+    }
+
+    /**
+     * Passes the ID of the BottomNavigationView item we want to be selected when on this
+     * activity.
+     * @param id    menu button id
+     */
+    @Override
+    public void selectCurrentIcon(int id) {
+        super.selectCurrentIcon(id);
     }
 }

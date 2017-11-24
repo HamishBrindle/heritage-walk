@@ -3,18 +3,12 @@ package heritagewalk.com.heritagewalk.maps;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
-import android.view.MenuItem;
 import android.widget.Toast;
-import android.widget.Toolbar;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -30,12 +24,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import heritagewalk.com.heritagewalk.R;
-import heritagewalk.com.heritagewalk.main.MainActivity;
+import heritagewalk.com.heritagewalk.main.BaseActivity;
 import heritagewalk.com.heritagewalk.maps.tasks.JSONParseAsyncTask;
 import heritagewalk.com.heritagewalk.maps.tasks.OnJSONParseCompleted;
 import heritagewalk.com.heritagewalk.models.Site;
 
-public class MapsActivity extends FragmentActivity
+public class MapsActivity extends BaseActivity
         implements OnMapReadyCallback, OnJSONParseCompleted,
         ClusterManager.OnClusterClickListener<Site>,
         ClusterManager.OnClusterInfoWindowClickListener<Site>,
@@ -52,44 +46,13 @@ public class MapsActivity extends FragmentActivity
     private GoogleMap mMap;
     private ArrayList<Site> mHeritageSites;
     private ClusterManager<Site> mClusterManager;
-    private Site siteSelected;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_maps);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            setActionBar(toolbar);
-        }
-        BottomNavigationView bottomNavigationView = (BottomNavigationView) findViewById(R.id.navigation);
-        bottomNavigationView.setSelectedItemId(R.id.action_explore);
-        bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                FragmentManager fm = getSupportFragmentManager();
-                switch (item.getItemId()) {
-                    case R.id.action_home:
-                        Log.e("msg", "action explore clicked");
-                        Intent mainActivity = new Intent(MapsActivity.this, MainActivity.class);
-                        startActivity(mainActivity);
-                        break;
-                    case R.id.action_explore:
-                        break;
-                    case R.id.action_sites:
-                        if (siteSelected != null) {
-                            startNewSiteActivity(siteSelected);
-                        }
-                        break;
-                    case R.id.action_achievements:
-                        break;
-                    default:
-                        break;
-                }
 
-                return true;
-            }
-        });
+        // Set the current icon as the Explore icon
+        selectCurrentIcon(R.id.action_explore);
 
         // Obtain data from JSON (later calls AddMarkersAsyncTask)
         // This is basically what kicks everything off.
@@ -123,7 +86,6 @@ public class MapsActivity extends FragmentActivity
     }
 
     private void setUpMap() {
-
         // Check if user has given permissions to access location
         int permissionCheck = ContextCompat.checkSelfPermission(this,
                 Manifest.permission.ACCESS_FINE_LOCATION);
@@ -205,23 +167,22 @@ public class MapsActivity extends FragmentActivity
         // We implement our own renderer so we can use custom-styled markers.
         mClusterManager.setRenderer(new SiteMarkerRenderer(this, mMap, mClusterManager));
 
-
         // Point the map's listeners at the listeners implemented by the cluster manager.
         mMap.setOnCameraIdleListener(mClusterManager);
         mMap.setOnMarkerClickListener(mClusterManager);
         mMap.setInfoWindowAdapter(mClusterManager.getMarkerManager());
-        mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
-            @Override
-            public void onInfoWindowClick(Marker marker) {
-                Log.d("newTag",marker.getTitle());
-                for(Site site : mHeritageSites) {
-                    if(marker.getTitle().equals(site.getName())) {
-                        siteSelected = site;
-                    }
-                }
-                Toast.makeText(MapsActivity.this, "Info Window", Toast.LENGTH_SHORT).show();
-            }
-        });
+        mMap.setOnInfoWindowClickListener(mClusterManager);
+//        mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
+//            @Override
+//            public void onInfoWindowClick(Marker marker) {
+//                Log.d("newTag", marker.getTitle());
+//                for (Site site : mHeritageSites) {
+//                    if (marker.getTitle().equals(site.getName())) {
+//                    }
+//                }
+//                Toast.makeText(MapsActivity.this, "Info Window", Toast.LENGTH_SHORT).show();
+//            }
+//        });
 
 
         mClusterManager.setOnClusterClickListener(this);
@@ -248,18 +209,19 @@ public class MapsActivity extends FragmentActivity
             Log.e(TAG, "onMapReady: Sites array is null!");
         }
     }
+
     /*
     * Serializing the site object is giving me issues, so I'm going to reload the site using Google places
     * in the SitePageActivity
-    * */
+    */
     private void startNewSiteActivity(Site newSite) {
+        Toast.makeText(this, "startNewSiteActivity Selected", Toast.LENGTH_SHORT).show();
         Intent intent = new Intent(MapsActivity.this, SitePageActivity.class);
-//        Intent intent = new Intent(MapsActivity.this, SiteFragment.class);
         intent.putExtra("selectedSiteName", newSite.getName());
         intent.putExtra("selectedSiteDesc", newSite.getDescription());
         intent.putExtra("selectedSiteSummary", newSite.getSummary());
 
-        intent.putExtra("selectedSiteLatLng", newSite.getLatLng().toString()) ;
+        intent.putExtra("selectedSiteLatLng", newSite.getLatLng().toString());
         startActivity(intent);
     }
 
@@ -280,7 +242,16 @@ public class MapsActivity extends FragmentActivity
 
     @Override
     public void onClusterItemInfoWindowClick(Site site) {
-        Toast.makeText(this, "Info Window", Toast.LENGTH_SHORT).show();
+        startNewSiteActivity(site);
     }
 
+    @Override
+    public int getLayout() {
+        return R.layout.activity_maps;
+    }
+
+    @Override
+    public void selectCurrentIcon(int id) {
+        // super.selectCurrentIcon(id);
+    }
 }
