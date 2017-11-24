@@ -1,6 +1,9 @@
 package heritagewalk.com.heritagewalk.maps;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.places.GeoDataClient;
 import com.google.android.gms.location.places.Places;
@@ -15,6 +18,7 @@ import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import android.app.Activity;
 import android.app.Fragment;
 import android.content.Context;
 import android.content.pm.PackageManager;
@@ -25,6 +29,8 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 
@@ -36,6 +42,7 @@ import android.widget.TextView;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.model.PolylineOptions;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.maps.DirectionsApi;
 import com.google.maps.GeoApiContext;
 import com.google.maps.android.PolyUtil;
@@ -59,7 +66,9 @@ import java.util.concurrent.TimeUnit;
 import heritagewalk.com.heritagewalk.R;
 import heritagewalk.com.heritagewalk.maps.tasks.MockLocationProvider;
 
-public class SitePageActivity extends FragmentActivity implements OnMapReadyCallback{
+public class SitePageActivity extends FragmentActivity implements OnMapReadyCallback,
+    LocationListener, GoogleApiClient.ConnectionCallbacks,
+        GoogleApiClient.OnConnectionFailedListener {
     protected GeoDataClient mGeoDataClient;
     protected PlaceDetectionClient mPlaceDetectionClient;
     protected String sitePosition;
@@ -71,6 +80,8 @@ public class SitePageActivity extends FragmentActivity implements OnMapReadyCall
     MockLocationProvider mMockLocationProvider;
     LatLng startingLocation;
     GeoApiContext mGeoApiContext;
+    OnSuccessListener<Location> mSuccessListener;
+    LocationRequest mLocationRequest;
 
 
     static float latitude;
@@ -95,19 +106,18 @@ public class SitePageActivity extends FragmentActivity implements OnMapReadyCall
         mLatLngBounds = new LatLngBounds(new LatLng(latitude,longitude), new LatLng(latitude + 0.0001, longitude + 0.0001));
 
         setUpViews();
-//
-////        // Construct a GeoDataClient.
-//        mGeoDataClient = Places.getGeoDataClient(this, null);
-////
-////        // Construct a PlaceDetectionClient.
-//        mPlaceDetectionClient = Places.getPlaceDetectionClient(this, null);
-//
-//        // TODO: Start using the Places API.
 
+        /*
+        * Getting Mock location provider to emulate the location of the device to the center of
+        * New Westminster.
+        * */
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         mMockLocationProvider = new MockLocationProvider(LocationManager.NETWORK_PROVIDER, this);
         mMockLocationProvider.pushLocation(centerOfNewWest.latitude, centerOfNewWest.longitude);
 
+        /*
+        * Checking if phone has Mock Location enabled.
+        * */
         if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) !=
                 PackageManager.PERMISSION_GRANTED &&
                 ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) !=
@@ -122,32 +132,38 @@ public class SitePageActivity extends FragmentActivity implements OnMapReadyCall
             return;
         }
 
+        /*
+        * Setting Mock location
+        * */
         mFusedLocationClient.setMockLocation(mMockLocationProvider.getLocationAt(0));
 
         mFusedLocationClient.setMockMode(true);
-        Log.d("onCreate", "oncreate");
         LocationManager locMgr = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+        /*
+        * Implementing Location Listener that will listen
+        * */
         LocationListener lis = new LocationListener() {
+            @Override
             public void onLocationChanged(Location location) {
-                //You will get the mock location
-            }
-
-            @Override
-            public void onStatusChanged(String s, int i, Bundle bundle) {
 
             }
 
             @Override
-            public void onProviderEnabled(String s) {
+            public void onStatusChanged(String provider, int status, Bundle extras) {
 
             }
 
             @Override
-            public void onProviderDisabled(String s) {
+            public void onProviderEnabled(String provider) {
 
             }
-            //...
+
+            @Override
+            public void onProviderDisabled(String provider) {
+
+            }
         };
+
 
         /*
         * Checking permissions
@@ -170,10 +186,16 @@ public class SitePageActivity extends FragmentActivity implements OnMapReadyCall
                 LocationManager.NETWORK_PROVIDER, 1000, 1, lis);
     }
 
+    /*
+    * Helper function for converting latlng.toString to a float value.
+    * */
     private float convertStringToFloat (String toConvert) {
         return Float.parseFloat(toConvert.replaceAll("[^\\d-.]", ""));
     }
 
+    /*
+    * Setting up the view below the mapview.
+    * */
     private void setUpViews() {
         //Set up googlemapsfragment
         SupportMapFragment mapFrag = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
@@ -190,15 +212,29 @@ public class SitePageActivity extends FragmentActivity implements OnMapReadyCall
         businessPromptView.setText(BUSINESS_PROMPT);
     }
 
+    /*
+    * Called when the map is ready.
+    * */
     @Override
     public void onMapReady(GoogleMap googleMap) {
         DirectionsResult directions = null;
         mGoogleMap = googleMap;
         mGoogleMap.setMaxZoomPreference(15.0f);
+
+        //Heritage Site location
         LatLng siteLocation = new LatLng(latitude,longitude);
-        startingLocation = new LatLng(mMockLocationProvider.getLocationAt(0).getLatitude(), mMockLocationProvider.getLocationAt(0).getLongitude());
-        CameraPosition startingPositionCamera = CameraPosition.builder().target(startingLocation).zoom(16).bearing(0).tilt(45).build();
+        //getting users starting position.  Currently it is using the mock location
+        startingLocation = new LatLng(mMockLocationProvider.getLocationAt(0).getLatitude(),
+                mMockLocationProvider.getLocationAt(0).getLongitude());
+
+        //Setting the camera position to user's current positiion, and tilting camera by 45 degrees
+        CameraPosition startingPositionCamera = CameraPosition.builder().
+                target(startingLocation).zoom(16).bearing(0).tilt(45).build();
+
+        //Updating camera to the starting position
         mGoogleMap.moveCamera(CameraUpdateFactory.newCameraPosition(startingPositionCamera));
+
+        //Checking users permissions.
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (ContextCompat.checkSelfPermission(this,
                     android.Manifest.permission.ACCESS_FINE_LOCATION)
@@ -209,8 +245,8 @@ public class SitePageActivity extends FragmentActivity implements OnMapReadyCall
         else {
             mGoogleMap.setMyLocationEnabled(true);
         }
-
         try {
+            //Getting direction from the starting location to the site location
             directions = getDirections(mGeoApiContext, startingLocation, siteLocation);
             Log.d("aftertry", "aftertry");
         } catch (InterruptedException e) {
@@ -224,12 +260,18 @@ public class SitePageActivity extends FragmentActivity implements OnMapReadyCall
         addPath(directions, mGoogleMap);
     }
 
+    /*
+    * Adding path along map for user to follow to the heritage site.
+    * */
     private void addPath(DirectionsResult results, GoogleMap mMap) {
         List<LatLng> decodedPath = PolyUtil.decode(results.routes[0].overviewPolyline
                 .getEncodedPath());
         mMap.addPolyline(new PolylineOptions().addAll(decodedPath));
     }
 
+    /*
+    * Getting Directions for the user
+    * */
     private DirectionsResult getDirections(GeoApiContext mGeoApiContext, LatLng origin, LatLng destination)
             throws InterruptedException, ApiException, IOException {
         DateTime now = new DateTime();
@@ -251,6 +293,10 @@ public class SitePageActivity extends FragmentActivity implements OnMapReadyCall
         return result;
     }
 
+    /*
+    * Getting the context for the particular Places API.  Also setting a query limit and timeouts
+    * for requests.
+    * */
     private GeoApiContext getGeoContext() {
         mGeoApiContext= new GeoApiContext();
         return mGeoApiContext.setQueryRateLimit(3)
@@ -260,6 +306,9 @@ public class SitePageActivity extends FragmentActivity implements OnMapReadyCall
                 .setWriteTimeout(1, TimeUnit.SECONDS);
     }
 
+    /*
+    * Addint the start and end
+    * */
     private void addStartEndMarkersToMap(DirectionsResult results, GoogleMap mMap) {
         mMap.addMarker(new MarkerOptions().position(new LatLng(results.routes[0].legs[0]
                 .startLocation.lat,results.routes[0].legs[0].startLocation.lng)).title(results
@@ -293,6 +342,31 @@ public class SitePageActivity extends FragmentActivity implements OnMapReadyCall
         Log.d("Map", "api: " + sb.toString());
 
         return sb;
+    }
+
+    @Override
+    public void onLocationChanged(Location location) {
+
+    }
+
+    @Override
+    public void onStatusChanged(String provider, int status, Bundle extras) {
+
+    }
+
+    @Override
+    public void onProviderEnabled(String provider) {
+
+    }
+
+    @Override
+    public void onProviderDisabled(String provider) {
+
+    }
+
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+
     }
 
     private class PlacesTask extends AsyncTask<String, Integer, String> {
@@ -426,6 +500,38 @@ public class SitePageActivity extends FragmentActivity implements OnMapReadyCall
 
             }
         }
+    }
+
+    /*
+    * Setting interval to continually update the user's position every 1000 ms
+    * */
+    @Override
+    public void onConnected(@Nullable Bundle bundle) {
+
+        mSuccessListener = new OnSuccessListener<Location>() {
+            @Override
+            public void onSuccess(Location location) {
+                // Got last known location. In some rare situations this can be null.
+                if (location != null) {
+                    // Logic to handle location object
+                }
+            }
+        };
+        mLocationRequest = new LocationRequest();
+        mLocationRequest.setInterval(1000);
+        mLocationRequest.setFastestInterval(1000);
+        mLocationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
+        if (ContextCompat.checkSelfPermission(this,
+                android.Manifest.permission.ACCESS_FINE_LOCATION)
+                == PackageManager.PERMISSION_GRANTED) {
+            mFusedLocationClient.getLastLocation()
+                    .addOnSuccessListener((Activity) this, mSuccessListener);
+        }
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+
     }
 
 }
