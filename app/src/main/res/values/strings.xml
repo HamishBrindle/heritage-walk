@@ -66,6 +66,10 @@
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="explore">Explore</string>
+    <string name="site_walk">Select Site</string>
+    <string name="achievements">Acheivements</string>
+    <string name="home">Home</string>
 
     <string name="font_name_gotham">gotham</string>
     <string name="register_button">Register</string>
@@ -83,5 +87,8 @@
     <string name="good_evening_text">Good Evening</string>
     <string name="google_request_token">1097770957398-v7soi0311kvfb6of64d1qakcgv0ve3a5.apps.googleusercontent.com</string>
     <string name="title_activity_achievements">AchievementsActivity</string>
+    <string name="title_activity_navigation">NavigationActivity</string>
+    <string name="action_logout">Logout</string>
+    <string name="heritage_walk_logo">Heritage Walk Logo</string>
 
 </resources>
