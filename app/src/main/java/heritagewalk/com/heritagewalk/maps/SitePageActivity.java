@@ -64,7 +64,7 @@ import heritagewalk.com.heritagewalk.models.Place;
 
 public class SitePageActivity extends BaseActivity
         implements OnMapReadyCallback,
-        LocationListener, GoogleApiClient.ConnectionCallbacks,
+        GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener {
 
     private GeoDataClient mGeoDataClient;
@@ -80,6 +80,7 @@ public class SitePageActivity extends BaseActivity
     private GeoApiContext mGeoApiContext;
     private OnSuccessListener<Location> mSuccessListener;
     private LocationRequest mLocationRequest;
+    private float mStartingBearing;
 
     static float latitude;
     static float longitude;
@@ -133,9 +134,10 @@ public class SitePageActivity extends BaseActivity
         * Setting Mock location
         * */
         mFusedLocationClient.setMockLocation(mMockLocationProvider.getLocationAt(0));
-
         mFusedLocationClient.setMockMode(true);
         LocationManager locMgr = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+
+        BlueDotWalker blueDot = new BlueDotWalker();
 
         /*
         * Checking permissions
@@ -155,7 +157,7 @@ public class SitePageActivity extends BaseActivity
             return;
         }
         locMgr.requestLocationUpdates(
-                LocationManager.NETWORK_PROVIDER, 1000, 1, this);
+                LocationManager.NETWORK_PROVIDER, 1000, 1, blueDot);
     }
 
     /*
@@ -191,20 +193,14 @@ public class SitePageActivity extends BaseActivity
     public void onMapReady(GoogleMap googleMap) {
         DirectionsResult directions = null;
         mGoogleMap = googleMap;
-        mGoogleMap.setMaxZoomPreference(15.0f);
+        mGoogleMap.setMaxZoomPreference(17.0f);
 
         //Heritage Site location
         LatLng siteLocation = new LatLng(latitude,longitude);
         //getting users starting position.  Currently it is using the mock location
         startingLocation = new LatLng(mMockLocationProvider.getLocationAt(0).getLatitude(),
                 mMockLocationProvider.getLocationAt(0).getLongitude());
-
-        //Setting the camera position to user's current positiion, and tilting camera by 45 degrees
-        CameraPosition startingPositionCamera = CameraPosition.builder().
-                target(startingLocation).zoom(16).bearing(0).tilt(45).build();
-
-        //Updating camera to the starting position
-        mGoogleMap.moveCamera(CameraUpdateFactory.newCameraPosition(startingPositionCamera));
+        float startingBearing = getBearing(startingLocation, siteLocation);
 
         //Checking users permissions.
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -224,16 +220,57 @@ public class SitePageActivity extends BaseActivity
         } catch (InterruptedException | ApiException | IOException e) {
             e.printStackTrace();
         }
+
+        //The addPath function sets the starting bearing and adds the path for the user
         addStartEndMarkersToMap(directions, mGoogleMap);
         addPath(directions, mGoogleMap);
+
+        //Setting the camera position to user's current positiion, and tilting camera by 45 degrees
+        CameraPosition startingPositionCamera = CameraPosition.builder().
+                target(startingLocation).zoom(30).bearing(mStartingBearing).tilt(45).build();
+        //Updating camera to the starting position
+        mGoogleMap.moveCamera(CameraUpdateFactory.newCameraPosition(startingPositionCamera));
+    }
+
+    private float getBearing(LatLng startingLocation, LatLng siteLocation) {
+
+        double bearing = 0.0;
+        double startX = startingLocation.longitude;
+        double startY = startingLocation.latitude;
+
+        double endX= siteLocation.longitude;
+        double endY = siteLocation.latitude;
+
+        double xDistance = startX - endX;
+        double yDistance = startY - endY;
+
+        double absXDist = Math.abs(xDistance);
+        double absYDist = Math.abs(yDistance);
+
+        if( startX < endX && startY < endY ) {
+            bearing = Math.toDegrees(Math.atan(absXDist / absYDist));
+        } else if( startX < endX && startY > endY ) {
+            bearing = Math.toDegrees(Math.atan(absYDist / absXDist));
+            bearing += 90;
+        } else if( startX > endX && startY > endY ) {
+            bearing = Math.toDegrees(Math.atan(absXDist / absYDist));
+            bearing += 180;
+        } else if( startX > endX && startY < endY ) {
+            bearing = Math.toDegrees(Math.atan(absYDist / absXDist));
+            bearing += 270;
+        }
+        bearing -= 10;
+        return (float) bearing;
     }
 
     /*
     * Adding path along map for user to follow to the heritage site.
+    * This function also sets the starting bearing for the camera
     * */
     private void addPath(DirectionsResult results, GoogleMap mMap) {
         List<LatLng> decodedPath = PolyUtil.decode(results.routes[0].overviewPolyline
                 .getEncodedPath());
+        mStartingBearing = getBearing(decodedPath.get(0), decodedPath.get(1));
         mMap.addPolyline(new PolylineOptions().addAll(decodedPath));
     }
 
@@ -284,7 +321,7 @@ public class SitePageActivity extends BaseActivity
         mMap.addMarker(new MarkerOptions().position(new LatLng(results.routes[0].legs[0].endLocation
                 .lat,results.routes[0].legs[0].endLocation.lng)).title(results.routes[0].legs[0]
                 .startAddress).snippet(getEndLocationTitle(results)));
-    }
+}
 
     private String getEndLocationTitle(DirectionsResult results){
         return  "Time :"+ results.routes[0].legs[0].duration.humanReadable
@@ -300,7 +337,6 @@ public class SitePageActivity extends BaseActivity
     // -- Places --
     public StringBuilder sbMethod() {
 
-
         StringBuilder sb = new StringBuilder("https://maps.googleapis.com/maps/api/place/nearbysearch/json?");
         sb.append("location=" + latitude + "," + longitude);
         sb.append("&radius=1000");
@@ -312,26 +348,6 @@ public class SitePageActivity extends BaseActivity
         Log.d("Map", "api: " + sb.toString());
 
         return sb;
-    }
-
-    @Override
-    public void onLocationChanged(Location location) {
-
-    }
-
-    @Override
-    public void onStatusChanged(String provider, int status, Bundle extras) {
-
-    }
-
-    @Override
-    public void onProviderEnabled(String provider) {
-
-    }
-
-    @Override
-    public void onProviderDisabled(String provider) {
-
     }
 
     @Override
@@ -507,6 +523,31 @@ public class SitePageActivity extends BaseActivity
     @Override
     public int getLayout() {
         return R.layout.activity_site_page;
+    }
+    /*
+    * Location listener.  Represented by the blue dot on the map.
+    * */
+    public class BlueDotWalker implements LocationListener {
+
+        @Override
+        public void onLocationChanged(Location location) {
+
+        }
+
+        @Override
+        public void onStatusChanged(String provider, int status, Bundle extras) {
+
+        }
+
+        @Override
+        public void onProviderEnabled(String provider) {
+
+        }
+
+        @Override
+        public void onProviderDisabled(String provider) {
+
+        }
     }
 }
 
