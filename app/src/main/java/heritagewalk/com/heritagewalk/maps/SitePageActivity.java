@@ -193,7 +193,6 @@ public class SitePageActivity extends BaseActivity
     public void onMapReady(GoogleMap googleMap) {
         DirectionsResult directions = null;
         mGoogleMap = googleMap;
-        mGoogleMap.setMaxZoomPreference(17.0f);
 
         //Heritage Site location
         LatLng siteLocation = new LatLng(latitude,longitude);
@@ -227,7 +226,7 @@ public class SitePageActivity extends BaseActivity
 
         //Setting the camera position to user's current positiion, and tilting camera by 45 degrees
         CameraPosition startingPositionCamera = CameraPosition.builder().
-                target(startingLocation).zoom(30).bearing(mStartingBearing).tilt(45).build();
+                target(startingLocation).zoom(17).bearing(mStartingBearing).tilt(45).build();
         //Updating camera to the starting position
         mGoogleMap.moveCamera(CameraUpdateFactory.newCameraPosition(startingPositionCamera));
     }
@@ -271,7 +270,9 @@ public class SitePageActivity extends BaseActivity
         List<LatLng> decodedPath = PolyUtil.decode(results.routes[0].overviewPolyline
                 .getEncodedPath());
         mStartingBearing = getBearing(decodedPath.get(0), decodedPath.get(1));
-        mMap.addPolyline(new PolylineOptions().addAll(decodedPath));
+        PolylineOptions path = new PolylineOptions().addAll(decodedPath).width(13).
+                color(this.getResources().getColor(R.color.colorPrimary));
+        mMap.addPolyline(path);
     }
 
     /*
@@ -312,7 +313,7 @@ public class SitePageActivity extends BaseActivity
     }
 
     /*
-    * Addint the start and end
+    * Adding the end
     * */
     private void addEndMarkerToMap(DirectionsResult results, GoogleMap mMap) {
         mMap.addMarker(new MarkerOptions().position(new LatLng(results.routes[0].legs[0].endLocation
@@ -340,8 +341,6 @@ public class SitePageActivity extends BaseActivity
         sb.append("&types=" + "restaurant");
         sb.append("&sensor=true");
         sb.append("&key=" + "AIzaSyC0jBiaFqbQytOt_KPExxKL8GRrEYiQgJY");
-
-
         Log.d("Map", "api: " + sb.toString());
 
         return sb;
