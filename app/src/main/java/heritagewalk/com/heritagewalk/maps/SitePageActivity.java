@@ -222,7 +222,7 @@ public class SitePageActivity extends BaseActivity
         }
 
         //The addPath function sets the starting bearing and adds the path for the user
-        addStartEndMarkersToMap(directions, mGoogleMap);
+        addEndMarkerToMap(directions, mGoogleMap);
         addPath(directions, mGoogleMap);
 
         //Setting the camera position to user's current positiion, and tilting camera by 45 degrees
@@ -314,10 +314,7 @@ public class SitePageActivity extends BaseActivity
     /*
     * Addint the start and end
     * */
-    private void addStartEndMarkersToMap(DirectionsResult results, GoogleMap mMap) {
-        mMap.addMarker(new MarkerOptions().position(new LatLng(results.routes[0].legs[0]
-                .startLocation.lat,results.routes[0].legs[0].startLocation.lng)).title(results
-                .routes[0].legs[0].startAddress));
+    private void addEndMarkerToMap(DirectionsResult results, GoogleMap mMap) {
         mMap.addMarker(new MarkerOptions().position(new LatLng(results.routes[0].legs[0].endLocation
                 .lat,results.routes[0].legs[0].endLocation.lng)).title(results.routes[0].legs[0]
                 .startAddress).snippet(getEndLocationTitle(results)));
