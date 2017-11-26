@@ -51,4 +51,15 @@
         <item name="android:textSize">36sp</item>
     </style>
 
+    <style name="Header">
+        <item name="android:textSize">25sp</item>
+    </style>
+    <style name="SubHeader">
+        <item name="android:textSize">20sp</item>
+    </style>
+
+    <style name="Paragraph">
+        <item name="android:textSize">15sp</item>
+    </style>
+
 </resources>

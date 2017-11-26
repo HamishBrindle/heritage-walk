@@ -182,7 +182,7 @@ public class SitePageActivity extends BaseActivity
         siteSummView.setText(siteSummary);
 
         TextView businessPromptView = findViewById(R.id.businessPrompt);
-        String BUSINESS_PROMPT = "Come check out these businesses!";
+        String BUSINESS_PROMPT = "Come check out these local businesses!";
         businessPromptView.setText(BUSINESS_PROMPT);
     }
 
