@@ -53,6 +53,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -413,6 +415,7 @@ public class SitePageActivity extends BaseActivity
 
             List<HashMap<String, String>> places = null;
             Place placeJson = new Place();
+            placeJson.setCurrentLatLng(new com.google.maps.model.LatLng(latitude, longitude));
 
             try {
                 jObject = new JSONObject(jsonData[0]);
@@ -433,7 +436,15 @@ public class SitePageActivity extends BaseActivity
             // Clears all the existing markers;
             mGoogleMap.clear();
 
-            for (int i = 0; i < list.size(); i++) {
+            //Sort List by Distance
+            Collections.sort(list, new markerSortByDistance());
+
+            int listSize = 3;
+            if (list.size() < listSize){
+                listSize = list.size();
+            }
+
+            for (int i = 0; i < listSize; i++) {
 
                 // Creating a marker
                 MarkerOptions markerOptions = new MarkerOptions();
@@ -469,6 +480,13 @@ public class SitePageActivity extends BaseActivity
                 Marker m = mGoogleMap.addMarker(markerOptions);
 
             }
+        }
+    }
+
+    //Custom Collections Comparator Class to sort Place list by distance to current position
+    private class markerSortByDistance implements Comparator<HashMap<String, String>>{
+        public int compare(HashMap<String, String> a, HashMap<String, String> b){
+            return Integer.parseInt(a.get("distance")) - Integer.parseInt(b.get("distance"));
         }
     }
 

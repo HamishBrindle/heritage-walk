@@ -1,5 +1,7 @@
 package heritagewalk.com.heritagewalk.models;
 
+import com.google.maps.model.LatLng;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -13,6 +15,14 @@ import java.util.List;
  */
 
 public class Place {
+
+    private String currentLat = "";
+    private String currentLng = "";
+
+    public void setCurrentLatLng(LatLng param){
+        currentLat = Double.toString(param.lat);
+        currentLng = Double.toString(param.lng);
+    }
 
     /**
      * Receives a JSONObject and returns a list
@@ -83,9 +93,24 @@ public class Place {
             place.put("lng", longitude);
             place.put("reference", reference);
 
+            double distance = haversine(Double.parseDouble(currentLat), Double.parseDouble(currentLng), Double.parseDouble(latitude), Double.parseDouble(longitude));
+            place.put("distance", Double.toString(distance));
         } catch (JSONException e) {
             e.printStackTrace();
         }
         return place;
+    }
+
+    //Calculates distance between two latlng coordinates
+    private double haversine(double lat1, double lng1, double lat2, double lng2) {
+        int r = 6371; // average radius of the earth in km
+        double dLat = Math.toRadians(lat2 - lat1);
+        double dLon = Math.toRadians(lng2 - lng1);
+        double a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2))
+                        * Math.sin(dLon / 2) * Math.sin(dLon / 2);
+        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        double d = r * c;
+        return d;
     }
 }
