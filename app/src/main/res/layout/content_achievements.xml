@@ -9,6 +9,19 @@
     tools:context="heritagewalk.com.heritagewalk.game.AchievementsActivity"
     tools:showIn="@layout/app_bar_achievements">
 
+<TextView
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    style="@style/Header"
+    android:text="@string/achievement_title"
+    android:id="@+id/textView2"
+    android:gravity="center_horizontal"/>
 
+    <ListView
+        android:id="@+id/achievement_list"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/textView2"></ListView>
 
 </RelativeLayout>

@@ -12,6 +12,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -39,6 +41,14 @@ public class AchievementsActivity extends AppCompatActivity
             }
         });
 
+        ListView achievementList = findViewById(R.id.achievement_list);
+        String[] achievements = getResources().getStringArray(R.array.achievement_list);
+
+        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(
+                this, android.R.layout.simple_list_item_1, achievements
+        );
+        achievementList.setAdapter(arrayAdapter);
+
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -48,7 +58,7 @@ public class AchievementsActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        AchievementsClient achievementsClient = Games.getAchievementsClient(this, GoogleSignIn.getLastSignedInAccount(this));
+//        AchievementsClient achievementsClient = Games.getAchievementsClient(this, GoogleSignIn.getLastSignedInAccount(this));
     }
 
     @Override

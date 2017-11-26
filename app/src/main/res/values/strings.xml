@@ -90,5 +90,15 @@
     <string name="title_activity_navigation">NavigationActivity</string>
     <string name="action_logout">Logout</string>
     <string name="heritage_walk_logo">Heritage Walk Logo</string>
+    <string name="achievement_title">🏅 Achievements 🏅</string>
+
+    <string-array name="achievement_list">
+        <item>First site visited</item>
+        <item>5 sites visited</item>
+        <item>10 sites visited</item>
+        <item>20 sites visited</item>
+        <item>50 sites visited</item>
+        <item>Key to the city! All Sites Visited</item>
+    </string-array>
 
 </resources>

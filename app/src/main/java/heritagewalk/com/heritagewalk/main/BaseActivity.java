@@ -24,6 +24,7 @@ import com.google.firebase.auth.FirebaseUser;
 import heritagewalk.com.heritagewalk.R;
 import heritagewalk.com.heritagewalk.auth.LoginActivity;
 import heritagewalk.com.heritagewalk.exception.ResourceNotFoundException;
+import heritagewalk.com.heritagewalk.game.AchievementsActivity;
 import heritagewalk.com.heritagewalk.maps.MapsActivity;
 
 public class BaseActivity extends AppCompatActivity
@@ -95,7 +96,8 @@ public class BaseActivity extends AppCompatActivity
                         Toast.makeText(getApplicationContext(), "Sites Clicked", Toast.LENGTH_SHORT).show();
                         break;
                     case R.id.action_achievements:
-                        Toast.makeText(getApplicationContext(), "Achievements Clicked", Toast.LENGTH_SHORT).show();
+                        intent = new Intent(getApplicationContext(), AchievementsActivity.class);
+                        startActivity(intent);
                         break;
                     default:
                         break;

@@ -50,5 +50,8 @@
         <item name="android:gravity">center</item>
         <item name="android:textSize">36sp</item>
     </style>
+    <style name="Header">
+        <item name="android:textSize">25sp</item>
+    </style>
 
 </resources>
