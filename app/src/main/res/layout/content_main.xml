@@ -8,35 +8,40 @@
     tools:context="heritagewalk.com.heritagewalk.main.MainActivity"
     tools:showIn="@layout/app_bar_main">
 
-    <Button
-        android:id="@+id/maps_button"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:text="@string/button_open_map"/>
+        android:orientation="vertical"
+        android:layout_centerInParent="true">
 
-    <Button
-        android:id="@+id/logout_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:text="Logout"
-        android:layout_below="@+id/maps_button"/>
+        <Button
+            android:id="@+id/maps_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/button_open_map"
+            style="@style/ThemeOverlay.MyGradientButton"/>
 
-    <Button
-        android:id="@+id/achievement_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:text="Give Achievement"
-        android:layout_below="@+id/logout_button"/>
+        <Button
+            android:id="@+id/logout_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Logout"
+            style="@style/ThemeOverlay.MyGradientButton"/>
 
-    <Button
-        android:id="@+id/achievement_page_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:text="View Achievements"
-        android:layout_below="@+id/achievement_button"/>
+        <Button
+            android:id="@+id/achievement_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Give Achievement"
+            style="@style/ThemeOverlay.MyGradientButton"/>
+
+        <Button
+            android:id="@+id/achievement_page_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="View Achievements"
+            style="@style/ThemeOverlay.MyGradientButton"/>
+
+    </LinearLayout>
 
 </RelativeLayout>

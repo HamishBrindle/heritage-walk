@@ -24,10 +24,14 @@ import com.google.firebase.auth.FirebaseUser;
 import heritagewalk.com.heritagewalk.R;
 import heritagewalk.com.heritagewalk.auth.LoginActivity;
 import heritagewalk.com.heritagewalk.exception.ResourceNotFoundException;
+import heritagewalk.com.heritagewalk.game.AchievementsActivity;
 import heritagewalk.com.heritagewalk.maps.MapsActivity;
+import heritagewalk.com.heritagewalk.maps.SitePageActivity;
+import heritagewalk.com.heritagewalk.utility.BottomNavigationViewHelper;
 
 public class BaseActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+        implements NavigationView.OnNavigationItemSelectedListener,
+        BottomNavigationView.OnNavigationItemSelectedListener {
 
     // TODO: Enable this to allow Firebase to get authentication of user.
     private final boolean FIREBASE_ENABLED = false;
@@ -78,32 +82,11 @@ public class BaseActivity extends AppCompatActivity
 
         // Bottom Navigation
         mBottomNavigationView = (BottomNavigationView) findViewById(R.id.navigation);
-        mBottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                Intent intent;
-                switch (item.getItemId()) {
-                    case R.id.action_home:
-                        intent = new Intent(getApplicationContext(), MainActivity.class);
-                        startActivity(intent);
-                        break;
-                    case R.id.action_explore:
-                        intent = new Intent(getApplicationContext(), MapsActivity.class);
-                        startActivity(intent);
-                        break;
-                    case R.id.action_sites:
-                        Toast.makeText(getApplicationContext(), "Sites Clicked", Toast.LENGTH_SHORT).show();
-                        break;
-                    case R.id.action_achievements:
-                        Toast.makeText(getApplicationContext(), "Achievements Clicked", Toast.LENGTH_SHORT).show();
-                        break;
-                    default:
-                        break;
-                }
+        // This disables the shifting of icons in the bottom navigation.
+        BottomNavigationViewHelper.disableShiftMode(mBottomNavigationView);
 
-                return true;
-            }
-        });
+        // Bottom Navigation listener. TODO: Try implementing the listener and defining below
+        mBottomNavigationView.setOnNavigationItemSelectedListener(this);
     }
 
     public void selectCurrentIcon(int id) {
@@ -141,7 +124,6 @@ public class BaseActivity extends AppCompatActivity
             mProgressDialog.setCancelable(false);
             mProgressDialog.setMessage(message);
         }
-
         mProgressDialog.show();
     }
 
@@ -213,24 +195,44 @@ public class BaseActivity extends AppCompatActivity
         return super.onOptionsItemSelected(item);
     }
 
-    @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
+
+        Intent intent;
+
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_camera) {
-            // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
-            Toast.makeText(this, "Gallery Clicked.", Toast.LENGTH_SHORT).show();
-        } else if (id == R.id.nav_slideshow) {
-
-        } else if (id == R.id.nav_manage) {
-
+        // Navigation Drawer Menu Options
+        if (id == R.id.nav_home) {
+            intent = new Intent(getApplicationContext(), MainActivity.class);
+            startActivity(intent);
+        } else if (id == R.id.nav_explore) {
+            intent = new Intent(getApplicationContext(), MapsActivity.class);
+            startActivity(intent);
+        } else if (id == R.id.nav_sites) {
+            intent = new Intent(getApplicationContext(), SiteListActivity.class);
+            startActivity(intent);
+        } else if (id == R.id.nav_achievements) {
+            intent = new Intent(getApplicationContext(), AchievementsActivity.class);
+            startActivity(intent);
         } else if (id == R.id.nav_share) {
-
+            // TODO: social media sharing
         } else if (id == R.id.nav_send) {
+            // TODO: sending email / contact?
 
+        // Bottom Navigation Menu Options
+        } else if (id == R.id.action_home) {
+            intent = new Intent(getApplicationContext(), MainActivity.class);
+            startActivity(intent);
+        } else if (id == R.id.action_explore) {
+            intent = new Intent(getApplicationContext(), MapsActivity.class);
+            startActivity(intent);
+        } else if (id == R.id.action_sites) {
+            intent = new Intent(getApplicationContext(), SiteListActivity.class);
+            startActivity(intent);
+        } else if (id == R.id.action_achievements) {
+            // Achievements button
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -247,4 +249,6 @@ public class BaseActivity extends AppCompatActivity
     public int getLayout() {
         return 0;
     }
+
+
 }

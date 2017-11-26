@@ -1,91 +1,62 @@
 package heritagewalk.com.heritagewalk.models;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-
-/**
- * Created by Wei on 11/22/2017.
- */
-
 public class Place {
 
-    /**
-     * Receives a JSONObject and returns a list
-     */
-    public List<HashMap<String, String>> parse(JSONObject jObject) {
+    private String name;
+    private String vicinity;
+    private String rating;
+    private String address;
+    private String website;
+    private String phoneNumber;
 
-        JSONArray jPlaces = null;
-        try {
-            /** Retrieves all the elements in the 'places' array */
-            jPlaces = jObject.getJSONArray("results");
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        /** Invoking getPlaces with the array of json object
-         * where each json object represent a place
-         */
-        return getPlaces(jPlaces);
+    public Place() {
     }
 
-    private List<HashMap<String, String>> getPlaces(JSONArray jPlaces) {
-        int placesCount = jPlaces.length();
-        List<HashMap<String, String>> placesList = new ArrayList<HashMap<String, String>>();
-        HashMap<String, String> place = null;
-
-        /** Taking each place, parses and adds to list object */
-        for (int i = 0; i < placesCount; i++) {
-            try {
-                /** Call getPlace with place JSON object to parse the place */
-                place = getPlace((JSONObject) jPlaces.get(i));
-                placesList.add(place);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
-        return placesList;
+    public String getWebsite() {
+        return website;
     }
 
-    /**
-     * Parsing the Place JSON object
-     */
-    private HashMap<String, String> getPlace(JSONObject jPlace) {
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
 
-        HashMap<String, String> place = new HashMap<String, String>();
-        String placeName = "-NA-";
-        String vicinity = "-NA-";
-        String latitude = "";
-        String longitude = "";
-        String reference = "";
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
 
-        try {
-            // Extracting Place name, if available
-            if (!jPlace.isNull("name")) {
-                placeName = jPlace.getString("name");
-            }
+    public void setWebsite(String website) {
+        this.website = website;
+    }
 
-            // Extracting Place Vicinity, if available
-            if (!jPlace.isNull("vicinity")) {
-                vicinity = jPlace.getString("vicinity");
-            }
+    public String getName() {
+        return name;
+    }
 
-            latitude = jPlace.getJSONObject("geometry").getJSONObject("location").getString("lat");
-            longitude = jPlace.getJSONObject("geometry").getJSONObject("location").getString("lng");
-            reference = jPlace.getString("reference");
+    public void setName(String name) {
+        this.name = name;
+    }
 
-            place.put("place_name", placeName);
-            place.put("vicinity", vicinity);
-            place.put("lat", latitude);
-            place.put("lng", longitude);
-            place.put("reference", reference);
+    public String getVicinity() {
+        return vicinity;
+    }
 
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        return place;
+    public void setVicinity(String vicinity) {
+        this.vicinity = vicinity;
+    }
+
+    public String getRating() {
+        return rating;
+    }
+
+    public void setRating(String rating) {
+        this.rating = rating;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
     }
 }

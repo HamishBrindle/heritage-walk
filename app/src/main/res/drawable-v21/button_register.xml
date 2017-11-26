@@ -12,11 +12,11 @@
         android:topLeftRadius="@dimen/button_corner_radius"
         android:topRightRadius="@dimen/button_corner_radius"/>
     <gradient
-        android:type="linear"
-        android:centerX="50%"
-        android:startColor="#219473"
-        android:endColor="#81c679"
         android:angle="180"
-        android:centerY="50%"/>
+        android:centerX="50%"
+        android:centerY="50%"
+        android:endColor="@color/colorPrimary"
+        android:startColor="@color/light_blue"
+        android:type="linear"/>
 
 </shape>

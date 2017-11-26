@@ -90,5 +90,7 @@
     <string name="title_activity_navigation">NavigationActivity</string>
     <string name="action_logout">Logout</string>
     <string name="heritage_walk_logo">Heritage Walk Logo</string>
+    <string name="begin_message">Are you ready to explore?</string>
+    <string name="title_activity_site_list">SiteListActivity</string>
 
 </resources>
