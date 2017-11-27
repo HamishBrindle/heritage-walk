@@ -29,6 +29,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
@@ -67,7 +68,7 @@ import heritagewalk.com.heritagewalk.models.Place;
 public class SitePageActivity extends BaseActivity
         implements OnMapReadyCallback,
         LocationListener, GoogleApiClient.ConnectionCallbacks,
-        GoogleApiClient.OnConnectionFailedListener {
+        GoogleApiClient.OnConnectionFailedListener{
 
     private GeoDataClient mGeoDataClient;
     private PlaceDetectionClient mPlaceDetectionClient;
@@ -276,24 +277,49 @@ public class SitePageActivity extends BaseActivity
                 .setWriteTimeout(1, TimeUnit.SECONDS);
     }
 
+    Marker startLocation;
+
     /*
     * Addint the start and end
     * */
     private void addStartEndMarkersToMap(DirectionsResult results, GoogleMap mMap) {
-        mMap.addMarker(new MarkerOptions().position(new LatLng(results.routes[0].legs[0]
+
+        startLocation = mMap.addMarker(new MarkerOptions().position(new LatLng(results.routes[0].legs[0]
                 .startLocation.lat,results.routes[0].legs[0].startLocation.lng)).title(results
-                .routes[0].legs[0].startAddress));
+                .routes[0].legs[0].startAddress).icon(BitmapDescriptorFactory.defaultMarker(120)));
+
         mMap.addMarker(new MarkerOptions().position(new LatLng(results.routes[0].legs[0].endLocation
                 .lat,results.routes[0].legs[0].endLocation.lng)).title(results.routes[0].legs[0]
                 .startAddress).snippet(getEndLocationTitle(results)));
+
+        mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener(){
+            @Override
+            public boolean onMarkerClick(Marker marker){
+                Log.d("onMarkerClick", "before equal reached");
+                if (marker.equals(startLocation)){
+                    findNearbyPlaces();
+                }
+                Log.d("onMarkerClick", "after equal reached");
+                return true;
+            }
+        });
     }
+
+//    /**Test for finding nearby locations **/
+//    @Override
+//    public boolean onMarkerClick(final Marker marker){
+//        if (marker.equals(startLocation)){
+//            findNearbyPlaces();
+//        }
+//        return true;
+//    }
 
     private String getEndLocationTitle(DirectionsResult results){
         return  "Time :"+ results.routes[0].legs[0].duration.humanReadable
                 + " Distance :" + results.routes[0].legs[0].distance.humanReadable;
     }
 
-    public void findNearbyPlaces(View v) {
+    public void findNearbyPlaces() {
         StringBuilder sbValue = new StringBuilder(sbMethod());
         PlacesTask placesTask = new PlacesTask();
         placesTask.execute(sbValue.toString());
@@ -436,8 +462,16 @@ public class SitePageActivity extends BaseActivity
             // Clears all the existing markers;
             mGoogleMap.clear();
 
+            for (int i = 0; i<list.size(); i++){
+                Log.d("unsorted", ""+list.get(i).get("distance") + " " + list.get(i).get("place_name"));
+            }
+
             //Sort List by Distance
             Collections.sort(list, new markerSortByDistance());
+
+            for (int i = 0; i<list.size(); i++){
+                Log.d("sorted", ""+list.get(i).get("distance") + " " + list.get(i).get("place_name"));
+            }
 
             int listSize = 3;
             if (list.size() < listSize){
@@ -486,7 +520,11 @@ public class SitePageActivity extends BaseActivity
     //Custom Collections Comparator Class to sort Place list by distance to current position
     private class markerSortByDistance implements Comparator<HashMap<String, String>>{
         public int compare(HashMap<String, String> a, HashMap<String, String> b){
-            return Integer.parseInt(a.get("distance")) - Integer.parseInt(b.get("distance"));
+            if(Double.parseDouble(a.get("distance")) >= Double.parseDouble(b.get("distance"))) {
+                return 1;
+            } else {
+                return -1;
+            }
         }
     }
 
