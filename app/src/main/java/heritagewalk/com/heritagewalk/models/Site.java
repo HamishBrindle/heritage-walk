@@ -17,6 +17,7 @@ public class Site implements ClusterItem, Serializable {
     private LatLng latLng;
     private String summary;
     private String Descriptn;
+    private String Address;
     private int id;
     private double X;
     private double Y;
@@ -25,6 +26,14 @@ public class Site implements ClusterItem, Serializable {
         if (latLng == null)
             latLng = new LatLng(Y, X);
         return latLng;
+    }
+
+    public String getAddress() {
+        return Address;
+    }
+
+    public void setAddress(String address) {
+        Address = address;
     }
 
     public double getX() {
