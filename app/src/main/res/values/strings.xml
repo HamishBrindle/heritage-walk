@@ -92,5 +92,7 @@
     <string name="heritage_walk_logo">Heritage Walk Logo</string>
     <string name="begin_message">Are you ready to explore?</string>
     <string name="title_activity_site_list">SiteListActivity</string>
+    <string name="welcome_to_heritage_walk">Welcome to Heritage Walk</string>
+    <string name="find_a_heritage_site">Find a Heritage Site</string>
 
 </resources>

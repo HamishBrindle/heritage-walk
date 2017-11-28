@@ -260,6 +260,7 @@ public class MapsActivity extends BaseActivity
         AlertDialog.Builder alert = new AlertDialog.Builder(new ContextThemeWrapper(this, R.style.MyDialog));
         alert.setTitle("Go For A Walk?");
         alert.setMessage("Would like you like to plot a route to " + site.getName() + "?");
+        alert.setIcon(R.drawable.ic_logo_crown);
         alert.setPositiveButton("Sure", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {

@@ -23,6 +23,7 @@ import com.google.firebase.auth.FirebaseUser;
 
 import heritagewalk.com.heritagewalk.R;
 import heritagewalk.com.heritagewalk.auth.LoginActivity;
+import heritagewalk.com.heritagewalk.auth.LoginRegisterActivity;
 import heritagewalk.com.heritagewalk.exception.ResourceNotFoundException;
 import heritagewalk.com.heritagewalk.game.AchievementsActivity;
 import heritagewalk.com.heritagewalk.maps.MapsActivity;
@@ -34,7 +35,7 @@ public class BaseActivity extends AppCompatActivity
         BottomNavigationView.OnNavigationItemSelectedListener {
 
     // TODO: Enable this to allow Firebase to get authentication of user.
-    private final boolean FIREBASE_ENABLED = false;
+    private final boolean FIREBASE_ENABLED = true;
 
     private FirebaseAuth mAuth;
     private ProgressDialog mProgressDialog;
@@ -110,7 +111,7 @@ public class BaseActivity extends AppCompatActivity
      */
     public void updateUI(FirebaseUser currentUser) {
         if (currentUser == null) {
-            Intent intent = new Intent(this, LoginActivity.class);
+            Intent intent = new Intent(this, LoginRegisterActivity.class);
             startActivity(intent);
         }
     }
