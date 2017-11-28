@@ -92,5 +92,15 @@
     <string name="heritage_walk_logo">Heritage Walk Logo</string>
     <string name="begin_message">Are you ready to explore?</string>
     <string name="title_activity_site_list">SiteListActivity</string>
+    <string name="achievements_title">🏅 Achievements 🏅</string>
+    <string-array name="achievement_array">
+        <item>first site visited</item>
+        <item>5 sites visited</item>
+        <item>10 sites visited</item>
+        <item>25 sites visited</item>
+        <item> 50 sites visited</item>
+        <item>code2 example</item>
+    </string-array>
+    <string name="title_activity_card_view_adapter">ActivityCardViewAdapter</string>
 
 </resources>

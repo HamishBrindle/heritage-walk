@@ -1,27 +1,29 @@
 package heritagewalk.com.heritagewalk.game;
 
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import com.google.android.gms.auth.api.signin.GoogleSignIn;
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
-import com.google.android.gms.games.AchievementsClient;
-import com.google.android.gms.games.Games;
+import java.util.ArrayList;
 
 import heritagewalk.com.heritagewalk.R;
+import heritagewalk.com.heritagewalk.models.Achievement;
+import heritagewalk.com.heritagewalk.utility.AchievementsCardViewAdapter;
+import heritagewalk.com.heritagewalk.utility.VerticalCardViewAdapter;
 
 public class AchievementsActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+
+    private RecyclerView mRecyclerView;
+    private ArrayList <Achievement> mAchievements;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,15 +31,6 @@ public class AchievementsActivity extends AppCompatActivity
         setContentView(R.layout.activity_achievements);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -48,7 +41,22 @@ public class AchievementsActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        AchievementsClient achievementsClient = Games.getAchievementsClient(this, GoogleSignIn.getLastSignedInAccount(this));
+//        AchievementsClient achievementsClient = Games.getAchievementsClient(this, GoogleSignIn.getLastSignedInAccount(this));
+        mRecyclerView = (RecyclerView)findViewById(R.id.achievements_rv);
+
+        setupAcheivementsView();
+    }
+
+    private void setupAcheivementsView() {
+        String[] achievementNames = getResources().getStringArray(R.array.achievement_array);
+        mAchievements = new ArrayList(achievementNames.length);
+        for( int i = 0; i < achievementNames.length; i++ ) {
+            mAchievements.add(new Achievement(achievementNames[i]));
+        }
+        AchievementsCardViewAdapter cardViewAdapter = new AchievementsCardViewAdapter(mAchievements, this);
+        LinearLayoutManager llm = new LinearLayoutManager(getApplicationContext());
+        mRecyclerView.setLayoutManager(llm);
+        mRecyclerView.setAdapter(cardViewAdapter);
     }
 
     @Override

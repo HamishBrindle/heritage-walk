@@ -14,6 +14,7 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
@@ -212,6 +213,8 @@ public class BaseActivity extends AppCompatActivity
             startActivity(intent);
         } else if (id == R.id.nav_sites) {
             intent = new Intent(getApplicationContext(), SiteListActivity.class);
+            Log.d("hello", "intent u there?");
+
             startActivity(intent);
         } else if (id == R.id.nav_achievements) {
             intent = new Intent(getApplicationContext(), AchievementsActivity.class);
@@ -232,7 +235,8 @@ public class BaseActivity extends AppCompatActivity
             intent = new Intent(getApplicationContext(), SiteListActivity.class);
             startActivity(intent);
         } else if (id == R.id.action_achievements) {
-            // Achievements button
+            intent = new Intent(getApplicationContext(), AchievementsActivity.class);
+            startActivity(intent);
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
