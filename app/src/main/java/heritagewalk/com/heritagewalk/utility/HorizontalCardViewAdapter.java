@@ -11,9 +11,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.model.LatLng;
+
 import java.util.List;
 
 import heritagewalk.com.heritagewalk.R;
+import heritagewalk.com.heritagewalk.maps.SitePageActivity;
 import heritagewalk.com.heritagewalk.models.Place;
 
 public class HorizontalCardViewAdapter extends RecyclerView.Adapter<HorizontalCardViewAdapter.MyViewHolder> {
@@ -21,6 +25,7 @@ public class HorizontalCardViewAdapter extends RecyclerView.Adapter<HorizontalCa
     private static final String TAG = "HorizontalCardViewAdapter";
     private List<Place> horizontalList;
     private Context mContext;
+    private GoogleMap mGoogleMap;
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
         public TextView name;
@@ -43,8 +48,9 @@ public class HorizontalCardViewAdapter extends RecyclerView.Adapter<HorizontalCa
         }
     }
 
-    public HorizontalCardViewAdapter(List<Place> horizontalList) {
+    public HorizontalCardViewAdapter(List<Place> horizontalList, GoogleMap mMap) {
         this.horizontalList = horizontalList;
+        this.mGoogleMap = mMap;
     }
 
     @Override
@@ -64,7 +70,8 @@ public class HorizontalCardViewAdapter extends RecyclerView.Adapter<HorizontalCa
         holder.name.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // TODO: Place marker on map and change camera-view to it
+                //new LatLng (Double.parseDouble(horizontalList.get(position).get), )
+                SitePageActivity.moveToMarker(horizontalList.get(position).getLatLng(), mGoogleMap);
             }
         });
     }

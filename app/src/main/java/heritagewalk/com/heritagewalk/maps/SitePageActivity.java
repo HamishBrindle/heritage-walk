@@ -15,9 +15,11 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.View;
 import android.widget.TextView;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -75,6 +77,7 @@ public class SitePageActivity extends BaseActivity
         GoogleApiClient.OnConnectionFailedListener,
         GoogleMap.OnMyLocationButtonClickListener, LocationSource.OnLocationChangedListener{
 
+    public SitePageActivity(){}
 
     private static final String TAG = "SitePageActivity";
     private String sitePosition;
@@ -88,6 +91,8 @@ public class SitePageActivity extends BaseActivity
     private OnSuccessListener<Location> mSuccessListener;
     private LocationRequest mLocationRequest;
     private float mStartingBearing;
+
+    private CardView mCardView;
 
     static float latitude;
     static float longitude;
@@ -111,6 +116,8 @@ public class SitePageActivity extends BaseActivity
         latitude = convertStringToFloat(latlong[0]);
         longitude = convertStringToFloat(latlong[1]);
         mLatLngBounds = new LatLngBounds(new LatLng(latitude, longitude), new LatLng(latitude + 0.0001, longitude + 0.0001));
+        mCardView = findViewById(R.id.card_view);
+
 
         setUpViews();
 
@@ -180,6 +187,12 @@ public class SitePageActivity extends BaseActivity
 
         TextView siteTitleView = findViewById(R.id.siteTitle);
         siteTitleView.setText(siteName);
+        siteTitleView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                moveToMarker(new LatLng(latitude, longitude), mGoogleMap);
+            }
+        });
 
         TextView siteSummView = findViewById(R.id.siteSummary);
         siteSummView.setText(siteSummary);
@@ -193,6 +206,13 @@ public class SitePageActivity extends BaseActivity
     public void onMapReady(GoogleMap googleMap) {
         DirectionsResult directions = null;
         mGoogleMap = googleMap;
+
+//        mCardView.setOnClickListener(new CardView.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                moveToMarker(new LatLng(latitude, longitude), mGoogleMap);
+//            }
+//        });
 
         //Heritage Site location
         LatLng siteLocation = new LatLng(latitude, longitude);
@@ -249,7 +269,7 @@ public class SitePageActivity extends BaseActivity
         //Updating camera to the starting position
         mGoogleMap.moveCamera(CameraUpdateFactory.newCameraPosition(startingPositionCamera));
 
-        findNearbyPlaces();
+        //findNearbyPlaces();
     }
 
 
@@ -487,7 +507,7 @@ public class SitePageActivity extends BaseActivity
 
             List<HashMap<String, String>> places = null;
             Place placeJson = new Place();
-            placeJson.setCurrentLatLng(new com.google.maps.model.LatLng(latitude, longitude));
+            placeJson.setCurrentLatLng(new LatLng(latitude, longitude));
             //PlacesJSONTask placesJSONTaskJson = new PlacesJSONTask();
 
             try {
@@ -522,7 +542,7 @@ public class SitePageActivity extends BaseActivity
                 Log.d("sorted", ""+list.get(i).get("distance") + " " + list.get(i).get("place_name"));
             }
 
-            int listSize = 3;
+            int listSize = 5;
             if (list.size() < listSize){
                 listSize = list.size();
             }
@@ -547,16 +567,18 @@ public class SitePageActivity extends BaseActivity
                 place.setName(hmPlace.get("place_name"));
                 place.setVicinity(hmPlace.get("vicinity"));
                 place.setRating(hmPlace.get("rating"));
+                place.setLatLng(new LatLng(Double.parseDouble(hmPlace.get("lat")), Double.parseDouble(hmPlace.get("lng"))));
 
                 LatLng latLng = new LatLng(lat, lng);
                 // Setting the position for the marker
                 markerOptions.position(latLng);
 
-                //markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA));
-                markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.restaurant_71));
-
+                // Setting title
                 markerOptions.title(hmPlace.get("place_name") + " : " + hmPlace.get("vicinity"));
-                markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA));
+
+                //markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA));
+                markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.restaurant_71l));
+
                 // Placing a marker on the touched position
                 Marker m = mGoogleMap.addMarker(markerOptions);
 
@@ -564,7 +586,7 @@ public class SitePageActivity extends BaseActivity
 
             }
 
-            HorizontalCardViewAdapter cardViewAdapter = new HorizontalCardViewAdapter(businesses);
+            HorizontalCardViewAdapter cardViewAdapter = new HorizontalCardViewAdapter(businesses, mGoogleMap);
             LinearLayoutManager horizontalLayoutManagaer
                     = new LinearLayoutManager(SitePageActivity.this, LinearLayoutManager.HORIZONTAL, false);
             mHorizontalLayoutView = (RecyclerView) findViewById(R.id.recycler_view);
@@ -573,6 +595,19 @@ public class SitePageActivity extends BaseActivity
             mHorizontalLayoutView.setAdapter(cardViewAdapter);
 
         }
+    }
+
+    static public void moveToMarker(LatLng newPos, GoogleMap gMap){
+
+        CameraPosition startingPositionCamera = CameraPosition.builder().
+                target(newPos).zoom(17).tilt(45).build();
+
+        //Updating camera to the starting position
+        gMap.moveCamera(CameraUpdateFactory.newCameraPosition(startingPositionCamera));
+    }
+
+    public GoogleMap getGMap(){
+        return mGoogleMap;
     }
 
     //Custom Collections Comparator Class to sort Place list by distance to current position

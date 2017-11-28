@@ -1,7 +1,7 @@
 package heritagewalk.com.heritagewalk.models;
 
 
-import com.google.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLng;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -24,9 +24,10 @@ public class Place {
     private String address;
     private String website;
     private String phoneNumber;
-    private String myVacinity;
+    private String myVicinity;
     private String targetLat = "";
     private String targetLng = "";
+    private LatLng mLatLng;
 
     /**
      * Empty constructor.
@@ -43,8 +44,8 @@ public class Place {
      * @param param LatLng of target location
      */
     public void setCurrentLatLng(LatLng param){
-        targetLat = Double.toString(param.lat);
-        targetLng = Double.toString(param.lng);
+        targetLat = Double.toString(param.latitude);
+        targetLng = Double.toString(param.longitude);
     }
 
     /**
@@ -100,6 +101,7 @@ public class Place {
         String longitude = "";
         String reference = "";
         String iconRef = "";
+        String mrating = "";
 
         try {
             // Extracting Place name, if available
@@ -110,6 +112,7 @@ public class Place {
             // Extracting Place Vicinity, if available
             if (!jPlace.isNull("vicinity")) {
                 vicinity = jPlace.getString("vicinity");
+                myVicinity = vicinity;
             }
 
             latitude = jPlace.getJSONObject("geometry").getJSONObject("location").getString("lat");
@@ -117,6 +120,7 @@ public class Place {
             reference = jPlace.getString("reference");
             //iconRef = jPlace.getString("icon"); Use for dynamic icons
             iconRef = "https://maps.gstatic.com/mapfiles/place_api/icons/shopping-71.png";
+            mrating = jPlace.getString("rating");
 
             place.put("place_name", placeName);
             place.put("vicinity", vicinity);
@@ -124,6 +128,9 @@ public class Place {
             place.put("lng", longitude);
             place.put("reference", reference);
             place.put("icon", iconRef);
+            place.put("rating", mrating);
+
+            //mLatLng = new LatLng(Double.parseDouble(latitude), Double.parseDouble(longitude));
 
             double distance = haversine(Double.parseDouble(targetLat), Double.parseDouble(targetLng), Double.parseDouble(latitude), Double.parseDouble(longitude));
             place.put("distance", Double.toString(distance));
@@ -154,15 +161,35 @@ public class Place {
     }
 
     public String getVicinity() {
-        return myVacinity;
+        return myVicinity;
     }
 
     public void setVicinity(String vicinity) {
-        myVacinity = vicinity;
+        myVicinity = vicinity;
     }
 
     public String getRating() {
         return rating;
+    }
+
+    public void setLatLng(LatLng latlng){
+        this.mLatLng = latlng;
+    }
+
+    public LatLng getLatLng() {
+        return mLatLng;
+    }
+
+    public void setRating(String rating) {
+        this.rating = rating;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
     }
 
 
@@ -187,15 +214,7 @@ public class Place {
         return d;
     }
 
-    public void setRating(String rating) {
-        this.rating = rating;
-    }
 
-    public String getAddress() {
-        return address;
-    }
 
-    public void setAddress(String address) {
-        this.address = address;
-    }
+
 }
