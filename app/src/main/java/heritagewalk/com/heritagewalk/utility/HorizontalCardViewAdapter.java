@@ -1,8 +1,6 @@
 package heritagewalk.com.heritagewalk.utility;
 
 import android.content.Context;
-import android.content.Intent;
-import android.net.Uri;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -12,7 +10,6 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.model.LatLng;
 
 import java.util.List;
 
@@ -70,7 +67,7 @@ public class HorizontalCardViewAdapter extends RecyclerView.Adapter<HorizontalCa
         holder.name.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //new LatLng (Double.parseDouble(horizontalList.get(position).get), )
+                //OnClick move camera view
                 SitePageActivity.moveToMarker(horizontalList.get(position).getLatLng(), mGoogleMap);
             }
         });

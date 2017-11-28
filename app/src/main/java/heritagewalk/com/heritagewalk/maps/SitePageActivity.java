@@ -190,6 +190,7 @@ public class SitePageActivity extends BaseActivity
         siteTitleView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                //Moves camera to target site's location
                 moveToMarker(new LatLng(latitude, longitude), mGoogleMap);
             }
         });
@@ -390,7 +391,11 @@ public class SitePageActivity extends BaseActivity
         placesTask.execute(sbValue.toString());
     }
 
-    // -- Places --
+
+    /**
+     * Builds string to properly call Google Places Webservices with.
+     * @return String sb;
+     */
     public StringBuilder sbMethod() {
 
         StringBuilder sb = new StringBuilder("https://maps.googleapis.com/maps/api/place/nearbysearch/json?");
@@ -495,11 +500,6 @@ public class SitePageActivity extends BaseActivity
     private class ParserTask extends AsyncTask<String, Integer, List<HashMap<String, String>>> {
 
         JSONObject jObject;
-        Context mContext;
-//
-//        public ParserTask(Context context) {
-//            mContext = context;
-//        }
 
         // Invoked by execute() method of this object
         @Override
@@ -597,6 +597,11 @@ public class SitePageActivity extends BaseActivity
         }
     }
 
+    /**
+     * Moves camera to desired lat long position.
+     * @param newPos Target LatLng
+     * @param gMap GoogleMap
+     */
     static public void moveToMarker(LatLng newPos, GoogleMap gMap){
 
         CameraPosition startingPositionCamera = CameraPosition.builder().
@@ -606,6 +611,10 @@ public class SitePageActivity extends BaseActivity
         gMap.moveCamera(CameraUpdateFactory.newCameraPosition(startingPositionCamera));
     }
 
+    /**
+     * Getter for SitePageActivity GoogleMap
+     * @return mGoogleMap GoogleMap
+     */
     public GoogleMap getGMap(){
         return mGoogleMap;
     }
