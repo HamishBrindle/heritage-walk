@@ -1,5 +1,7 @@
 package heritagewalk.com.heritagewalk.models;
 
+import android.graphics.Bitmap;
+
 public class Place {
 
     private String name;
@@ -8,8 +10,26 @@ public class Place {
     private String address;
     private String website;
     private String phoneNumber;
+    private String placeId;
+    private Bitmap bitmap;
 
     public Place() {
+    }
+
+    public Bitmap getBitmap() {
+        return bitmap;
+    }
+
+    public void setBitmap(Bitmap bitmap) {
+        this.bitmap = bitmap;
+    }
+
+    public String getPlaceId() {
+        return placeId;
+    }
+
+    public void setPlaceId(String placeId) {
+        this.placeId = placeId;
     }
 
     public String getWebsite() {
@@ -58,5 +78,9 @@ public class Place {
 
     public void setAddress(String address) {
         this.address = address;
+    }
+
+    public Bitmap getPhoto() {
+        return bitmap;
     }
 }

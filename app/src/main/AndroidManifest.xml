@@ -59,7 +59,9 @@
         <activity
             android:name=".maps.SitePageActivity"
             android:label="@string/title_activity_site_page"
-            android:theme="@style/AppTheme" />
+            android:theme="@style/AppTheme"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".auth.LoginActivity"
             android:launchMode="singleTask"
@@ -83,11 +85,15 @@
         <activity
             android:name=".game.AchievementsActivity"
             android:label="@string/title_activity_achievements"
-            android:theme="@style/AppTheme" />
+            android:theme="@style/AppTheme"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".main.SiteListActivity"
             android:label="@string/title_activity_site_list"
-            android:theme="@style/AppTheme"/>
+            android:theme="@style/AppTheme"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait" />
     </application>
 
 </manifest>
