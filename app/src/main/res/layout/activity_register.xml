@@ -1,10 +1,10 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                xmlns:app="http://schemas.android.com/apk/res-auto"
-                xmlns:tools="http://schemas.android.com/tools"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_gravity="center"
-                tools:context="heritagewalk.com.heritagewalk.maps.MapsActivity">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_gravity="center"
+    android:background="@drawable/bg_blur_34"
+    tools:context="heritagewalk.com.heritagewalk.maps.MapsActivity">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -13,13 +13,12 @@
         android:orientation="vertical">
 
         <!-- Start of Logo & Wordmark -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:orientation="vertical">
-
-        </LinearLayout>
+        <ImageView
+            android:id="@+id/logo_wordmark"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_gravity="center_horizontal"
+            android:src="@drawable/ic_logo_splash" />
         <!-- End of Logo & Wordmark -->
 
         <!-- Start of Form Fields and Buttons -->
@@ -28,7 +27,6 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="48dp"
             android:layout_marginRight="48dp"
-            android:layout_marginTop="48dp"
             android:gravity="center"
             android:orientation="vertical">
 
@@ -43,8 +41,7 @@
                     android:layout_height="wrap_content"
                     android:hint="@string/first_name"
                     android:inputType="text"
-                    android:textColor="@color/colorAccent"
-                    android:textSize="14sp"/>
+                    android:textSize="14sp" />
 
             </android.support.design.widget.TextInputLayout>
             <!-- End of First Name -->
@@ -60,7 +57,7 @@
                     android:layout_height="wrap_content"
                     android:hint="@string/last_name"
                     android:inputType="text"
-                    android:textSize="14sp"/>
+                    android:textSize="14sp" />
 
             </android.support.design.widget.TextInputLayout>
             <!-- End of Last Name -->
@@ -76,7 +73,7 @@
                     android:layout_height="wrap_content"
                     android:hint="@string/prompt_email"
                     android:inputType="textEmailAddress"
-                    android:textSize="14sp"/>
+                    android:textSize="14sp" />
 
             </android.support.design.widget.TextInputLayout>
             <!-- End of Email -->
@@ -92,7 +89,7 @@
                     android:layout_height="wrap_content"
                     android:hint="@string/prompt_password"
                     android:inputType="textPassword"
-                    android:textSize="14sp"/>
+                    android:textSize="14sp" />
 
             </android.support.design.widget.TextInputLayout>
             <!-- End of Password -->
@@ -108,7 +105,7 @@
                     android:layout_height="wrap_content"
                     android:hint="@string/prompt_confirm_password"
                     android:inputType="textPassword"
-                    android:textSize="14sp"/>
+                    android:textSize="14sp" />
 
             </android.support.design.widget.TextInputLayout>
             <!-- End of Confirm Password -->
@@ -120,7 +117,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 android:checked="true"
-                android:text="@string/form_remember_me"/>
+                android:text="@string/form_remember_me" />
 
             <!-- Submit Button -->
             <Button
@@ -129,8 +126,7 @@
                 android:layout_height="40dp"
                 android:layout_marginTop="16dp"
                 android:background="@drawable/button_register"
-                android:text="@string/submit_button"
-                />
+                android:text="@string/submit_button" />
 
             <!-- Start of Google Sign-In Button -->
             <LinearLayout
@@ -147,17 +143,17 @@
                 <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:src="@drawable/ic_google"/>
+                    android:src="@drawable/ic_google" />
 
                 <!-- Google Button Text -->
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
+                    android:font="@font/gotham_bold"
                     android:gravity="center_vertical"
                     android:text="@string/google_button"
                     android:textAllCaps="true"
-                    android:textSize="14sp"
-                    android:font="@font/gotham_bold"/>
+                    android:textSize="14sp" />
 
             </LinearLayout>
             <!-- End of Google Sign-In Button -->

@@ -1,11 +1,12 @@
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                                             xmlns:app="http://schemas.android.com/apk/res-auto"
-                                             xmlns:tools="http://schemas.android.com/tools"
-                                             android:layout_width="match_parent"
-                                             android:layout_height="match_parent"
-                                             android:gravity="center_horizontal"
-                                             android:orientation="vertical"
-                                             tools:context="heritagewalk.com.heritagewalk.maps.MapsActivity" >
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bg_blur_34"
+    android:gravity="center_horizontal"
+    android:orientation="vertical"
+    tools:context="heritagewalk.com.heritagewalk.maps.MapsActivity">
 
 
     <RelativeLayout
@@ -38,19 +39,16 @@
             tools:layout_constraintBottom_creator="1"
             tools:layout_constraintLeft_creator="1"
             tools:layout_constraintRight_creator="1"
-            tools:layout_constraintTop_creator="1"/>
+            tools:layout_constraintTop_creator="1" />
 
         <!-- Start of Logo & Wordmark -->
-        <LinearLayout
+        <ImageView
             android:id="@+id/logo_wordmark"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:orientation="vertical">
-
-        </LinearLayout>
+            android:layout_width="@dimen/logo_width"
+            android:layout_height="@dimen/logo_width"
+            android:layout_centerHorizontal="true"
+            android:src="@drawable/ic_logo_splash" />
         <!-- End of Logo & Wordmark -->
-
 
         <ScrollView
             android:id="@+id/login_form"
@@ -83,8 +81,7 @@
                         android:layout_height="wrap_content"
                         android:hint="@string/prompt_email"
                         android:inputType="textEmailAddress"
-                        android:maxLines="1"
-                        />
+                        android:maxLines="1" />
 
                 </android.support.design.widget.TextInputLayout>
 
@@ -100,8 +97,7 @@
                         android:imeActionLabel="@string/action_sign_in_short"
                         android:imeOptions="actionUnspecified"
                         android:inputType="textPassword"
-                        android:maxLines="1"
-                        />
+                        android:maxLines="1" />
 
                 </android.support.design.widget.TextInputLayout>
 
@@ -115,7 +111,7 @@
                     android:layout_marginTop="16dp"
                     android:background="@drawable/button_register"
                     android:text="@string/action_sign_in_short"
-                    android:textStyle="bold"/>
+                    android:textStyle="bold" />
 
 
                 <!-- Start of Google Sign-In Button -->
@@ -134,17 +130,17 @@
                     <ImageView
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
-                        android:src="@drawable/ic_google"/>
+                        android:src="@drawable/ic_google" />
 
                     <!-- Google Button Text -->
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
+                        android:font="@font/gotham_bold"
                         android:gravity="center_vertical"
                         android:text="Google"
                         android:textAllCaps="true"
-                        android:textSize="14sp"
-                        android:font="@font/gotham_bold"/>
+                        android:textSize="14sp" />
 
                 </LinearLayout>
                 <!-- End of Google Sign-In Button -->

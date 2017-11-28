@@ -1,29 +1,50 @@
 package heritagewalk.com.heritagewalk.models;
 
-import android.graphics.drawable.Icon;
 
 import com.google.maps.model.LatLng;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 /**
- * Created by Wei on 11/22/2017.
+ * Place.java is a JSON parser class designed to break down data from
+ * Google Place Webservice into a format which can easily be placed
+ * as markers on a google map.
+ *
+ * Current implementation finds the nearest restaurants to target
+ * location and displays them with custom icons.
  */
-
 public class Place {
 
-    private String currentLat = "";
-    private String currentLng = "";
+    private String name;
+    private String rating;
+    private String address;
+    private String website;
+    private String phoneNumber;
+    private String myVacinity;
+    private String targetLat = "";
+    private String targetLng = "";
 
+    /**
+     * Empty constructor.
+     */
+    public Place() {
+    }
+
+    public String getWebsite() {
+        return website;
+    }
+
+    /**
+     * Set latlng of target location
+     * @param param LatLng of target location
+     */
     public void setCurrentLatLng(LatLng param){
-        currentLat = Double.toString(param.lat);
-        currentLng = Double.toString(param.lng);
+        targetLat = Double.toString(param.lat);
+        targetLng = Double.toString(param.lng);
     }
 
     /**
@@ -44,6 +65,11 @@ public class Place {
         return getPlaces(jPlaces);
     }
 
+    /**
+     * List of google places objects as a hashmap
+     * @param jPlaces Google Places JSON object array
+     * @return List of Hashmaps
+     */
     private List<HashMap<String, String>> getPlaces(JSONArray jPlaces) {
         int placesCount = jPlaces.length();
         List<HashMap<String, String>> placesList = new ArrayList<HashMap<String, String>>();
@@ -99,7 +125,7 @@ public class Place {
             place.put("reference", reference);
             place.put("icon", iconRef);
 
-            double distance = haversine(Double.parseDouble(currentLat), Double.parseDouble(currentLng), Double.parseDouble(latitude), Double.parseDouble(longitude));
+            double distance = haversine(Double.parseDouble(targetLat), Double.parseDouble(targetLng), Double.parseDouble(latitude), Double.parseDouble(longitude));
             place.put("distance", Double.toString(distance));
         } catch (JSONException e) {
             e.printStackTrace();
@@ -107,7 +133,48 @@ public class Place {
         return place;
     }
 
-    //Calculates distance between two latlng coordinates
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
+
+    public void setWebsite(String website) {
+        this.website = website;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getVicinity() {
+        return myVacinity;
+    }
+
+    public void setVicinity(String vicinity) {
+        myVacinity = vicinity;
+    }
+
+    public String getRating() {
+        return rating;
+    }
+
+
+    /**
+     * Haversine function to determine distance between two
+     * geographical latlng coordinates.
+     * @param lat1 Target location lat
+     * @param lng1 Target location long
+     * @param lat2 Current location lat
+     * @param lng2 Current location long
+     * @return
+     */
     private double haversine(double lat1, double lng1, double lat2, double lng2) {
         int r = 6371; // average radius of the earth in km
         double dLat = Math.toRadians(lat2 - lat1);
@@ -118,5 +185,17 @@ public class Place {
         double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
         double d = r * c;
         return d;
+    }
+
+    public void setRating(String rating) {
+        this.rating = rating;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
     }
 }

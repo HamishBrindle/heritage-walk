@@ -458,7 +458,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderManager.Lo
                 @Override
                 public void onComplete(@NonNull Task<AuthResult> task) {
                     if (task.isSuccessful()) {
-                        Toast.makeText(LoginActivity.this, "User is logged in now", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(LoginActivity.this, "User Is Logged In", Toast.LENGTH_SHORT).show();
                         mAuthListener.onAuthStateChanged(mAuth);
                     } else if (task.getException() instanceof FirebaseAuthInvalidUserException) {
                         Toast.makeText(LoginActivity.this, "User does not exist.", Toast.LENGTH_SHORT).show();

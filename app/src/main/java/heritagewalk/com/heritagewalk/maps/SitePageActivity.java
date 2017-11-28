@@ -1,5 +1,6 @@
 package heritagewalk.com.heritagewalk.maps;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -14,8 +15,9 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
-import android.view.View;
 import android.widget.TextView;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -23,17 +25,16 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.location.places.GeoDataClient;
-import com.google.android.gms.location.places.PlaceDetectionClient;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.LocationSource;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
@@ -56,6 +57,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -63,18 +65,20 @@ import java.util.concurrent.TimeUnit;
 import heritagewalk.com.heritagewalk.R;
 import heritagewalk.com.heritagewalk.main.BaseActivity;
 import heritagewalk.com.heritagewalk.maps.tasks.MockLocationProvider;
+import heritagewalk.com.heritagewalk.maps.tasks.PlacesJSONTask;
 import heritagewalk.com.heritagewalk.models.Place;
+import heritagewalk.com.heritagewalk.utility.DeviceUtility;
+import heritagewalk.com.heritagewalk.utility.HorizontalCardViewAdapter;
 
 public class SitePageActivity extends BaseActivity
-        implements OnMapReadyCallback,
-        LocationListener, GoogleApiClient.ConnectionCallbacks,
-        GoogleApiClient.OnConnectionFailedListener{
+        implements OnMapReadyCallback,GoogleApiClient.ConnectionCallbacks,
+        GoogleApiClient.OnConnectionFailedListener,
+        GoogleMap.OnMyLocationButtonClickListener, LocationSource.OnLocationChangedListener{
 
-    private GeoDataClient mGeoDataClient;
-    private PlaceDetectionClient mPlaceDetectionClient;
+
+    private static final String TAG = "SitePageActivity";
     private String sitePosition;
     private String siteName;
-    private String siteDescription;
     private String siteSummary;
     private final LatLng centerOfNewWest = new LatLng(49.2057, -122.9110);
     private FusedLocationProviderClient mFusedLocationClient;
@@ -83,14 +87,17 @@ public class SitePageActivity extends BaseActivity
     private GeoApiContext mGeoApiContext;
     private OnSuccessListener<Location> mSuccessListener;
     private LocationRequest mLocationRequest;
+    private float mStartingBearing;
 
     static float latitude;
     static float longitude;
 
-    private TextView siteTitle;
-
     protected GoogleMap mGoogleMap;
     protected LatLngBounds mLatLngBounds;
+    private RecyclerView mHorizontalLayoutView;
+    private boolean mFollowUser;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -107,38 +114,34 @@ public class SitePageActivity extends BaseActivity
 
         setUpViews();
 
-        /*
-        * Getting Mock location provider to emulate the location of the device to the center of
-        * New Westminster.
-        * */
-        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
-        mMockLocationProvider = new MockLocationProvider(LocationManager.NETWORK_PROVIDER, this);
-        mMockLocationProvider.pushLocation(centerOfNewWest.latitude, centerOfNewWest.longitude);
+        // Don't bother me with this Mock location crap if I'm a real device.
+        if (DeviceUtility.isEmulator()) {
 
-        /*
-        * Checking if phone has Mock Location enabled.
-        * */
-        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) !=
-                PackageManager.PERMISSION_GRANTED &&
-                ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) !=
-                        PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-            return;
+            /*
+            * Checking if phone has Mock Location enabled.
+            */
+            if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) !=
+                    PackageManager.PERMISSION_GRANTED &&
+                    ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) !=
+                            PackageManager.PERMISSION_GRANTED) {
+                return;
+            }
+
+            /*
+            * Getting Mock location provider to emulate the location of the device to the center of
+            * New Westminster.
+            */
+            mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+            mMockLocationProvider = new MockLocationProvider(LocationManager.NETWORK_PROVIDER, this);
+            mMockLocationProvider.pushLocation(centerOfNewWest.latitude, centerOfNewWest.longitude);
+
+            // Setting Mock location
+            mFusedLocationClient.setMockLocation(mMockLocationProvider.getLocationAt(0));
+            mFusedLocationClient.setMockMode(true);
         }
 
-        /*
-        * Setting Mock location
-        * */
-        mFusedLocationClient.setMockLocation(mMockLocationProvider.getLocationAt(0));
-
-        mFusedLocationClient.setMockMode(true);
         LocationManager locMgr = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+        BlueDotWalker blueDot = new BlueDotWalker();
 
         /*
         * Checking permissions
@@ -157,14 +160,13 @@ public class SitePageActivity extends BaseActivity
             // for ActivityCompat#requestPermissions for more details.
             return;
         }
-        locMgr.requestLocationUpdates(
-                LocationManager.NETWORK_PROVIDER, 1000, 1, this);
+        locMgr.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1000, 1, blueDot);
     }
 
     /*
     * Helper function for converting latlng.toString to a float value.
     * */
-    private float convertStringToFloat (String toConvert) {
+    private float convertStringToFloat(String toConvert) {
         return Float.parseFloat(toConvert.replaceAll("[^\\d-.]", ""));
     }
 
@@ -182,9 +184,6 @@ public class SitePageActivity extends BaseActivity
         TextView siteSummView = findViewById(R.id.siteSummary);
         siteSummView.setText(siteSummary);
 
-        TextView businessPromptView = findViewById(R.id.businessPrompt);
-        String BUSINESS_PROMPT = "Come check out these businesses!";
-        businessPromptView.setText(BUSINESS_PROMPT);
     }
 
     /*
@@ -194,20 +193,28 @@ public class SitePageActivity extends BaseActivity
     public void onMapReady(GoogleMap googleMap) {
         DirectionsResult directions = null;
         mGoogleMap = googleMap;
-        mGoogleMap.setMaxZoomPreference(15.0f);
 
         //Heritage Site location
-        LatLng siteLocation = new LatLng(latitude,longitude);
-        //getting users starting position.  Currently it is using the mock location
-        startingLocation = new LatLng(mMockLocationProvider.getLocationAt(0).getLatitude(),
-                mMockLocationProvider.getLocationAt(0).getLongitude());
+        LatLng siteLocation = new LatLng(latitude, longitude);
+        LocationManager locMgr = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
 
-        //Setting the camera position to user's current positiion, and tilting camera by 45 degrees
-        CameraPosition startingPositionCamera = CameraPosition.builder().
-                target(startingLocation).zoom(16).bearing(0).tilt(45).build();
-
-        //Updating camera to the starting position
-        mGoogleMap.moveCamera(CameraUpdateFactory.newCameraPosition(startingPositionCamera));
+        if (DeviceUtility.isEmulator()) {
+            //getting users starting position.  Currently it is using the mock location
+            startingLocation = new LatLng(mMockLocationProvider.getLocationAt(0).getLatitude(),
+                    mMockLocationProvider.getLocationAt(0).getLongitude());
+        } else {
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                    && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                // TODO: Consider calling
+                return;
+            }
+            LatLng latLng = new LatLng(
+                    locMgr.getLastKnownLocation(LocationManager.PASSIVE_PROVIDER).getLatitude(),
+                    locMgr.getLastKnownLocation(LocationManager.PASSIVE_PROVIDER).getLongitude()
+            );
+            startingLocation = latLng;
+        }
+        float startingBearing = getBearing(startingLocation, siteLocation);
 
         //Checking users permissions.
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -215,9 +222,13 @@ public class SitePageActivity extends BaseActivity
                     android.Manifest.permission.ACCESS_FINE_LOCATION)
                     == PackageManager.PERMISSION_GRANTED) {
                 mGoogleMap.setMyLocationEnabled(true);
+                mGoogleMap.setPadding(0,200,0,0);
+                mGoogleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+                mGoogleMap.setMapStyle(
+                        MapStyleOptions.loadRawResourceStyle(
+                                this, R.raw.map_style));
             }
-        }
-        else {
+        } else {
             mGoogleMap.setMyLocationEnabled(true);
         }
         try {
@@ -227,17 +238,64 @@ public class SitePageActivity extends BaseActivity
         } catch (InterruptedException | ApiException | IOException e) {
             e.printStackTrace();
         }
-        addStartEndMarkersToMap(directions, mGoogleMap);
+
+        //The addPath function sets the starting bearing and adds the path for the user
+        addEndMarkerToMap(directions, mGoogleMap);
         addPath(directions, mGoogleMap);
+
+        //Setting the camera position to user's current positiion, and tilting camera by 45 degrees
+        CameraPosition startingPositionCamera = CameraPosition.builder().
+                target(startingLocation).zoom(17).bearing(mStartingBearing).tilt(45).build();
+        //Updating camera to the starting position
+        mGoogleMap.moveCamera(CameraUpdateFactory.newCameraPosition(startingPositionCamera));
+
+        findNearbyPlaces();
+    }
+
+
+
+    private float getBearing(LatLng startingLocation, LatLng siteLocation) {
+
+        double bearing = 0.0;
+        double startX = startingLocation.longitude;
+        double startY = startingLocation.latitude;
+
+        double endX = siteLocation.longitude;
+        double endY = siteLocation.latitude;
+
+        double xDistance = startX - endX;
+        double yDistance = startY - endY;
+
+        double absXDist = Math.abs(xDistance);
+        double absYDist = Math.abs(yDistance);
+
+        if (startX < endX && startY < endY) {
+            bearing = Math.toDegrees(Math.atan(absXDist / absYDist));
+        } else if (startX < endX && startY > endY) {
+            bearing = Math.toDegrees(Math.atan(absYDist / absXDist));
+            bearing += 90;
+        } else if (startX > endX && startY > endY) {
+            bearing = Math.toDegrees(Math.atan(absXDist / absYDist));
+            bearing += 180;
+        } else if (startX > endX && startY < endY) {
+            bearing = Math.toDegrees(Math.atan(absYDist / absXDist));
+            bearing += 270;
+        }
+        bearing -= 10;
+        return (float) bearing;
     }
 
     /*
     * Adding path along map for user to follow to the heritage site.
+    * This function also sets the starting bearing for the camera
     * */
     private void addPath(DirectionsResult results, GoogleMap mMap) {
         List<LatLng> decodedPath = PolyUtil.decode(results.routes[0].overviewPolyline
                 .getEncodedPath());
-        mMap.addPolyline(new PolylineOptions().addAll(decodedPath));
+        mStartingBearing = getBearing(decodedPath.get(0), decodedPath.get(1));
+        PolylineOptions path = new PolylineOptions().addAll(decodedPath).width(13).
+                color(this.getResources().getColor(R.color.colorPrimary));
+        mMap.addPolyline(path);
     }
 
     /*
@@ -269,7 +327,7 @@ public class SitePageActivity extends BaseActivity
     * for requests.
     * */
     private GeoApiContext getGeoContext() {
-        mGeoApiContext= new GeoApiContext();
+        mGeoApiContext = new GeoApiContext();
         return mGeoApiContext.setQueryRateLimit(3)
                 .setApiKey(getString(R.string.directions_api_key))
                 .setConnectTimeout(1, TimeUnit.SECONDS)
@@ -277,26 +335,19 @@ public class SitePageActivity extends BaseActivity
                 .setWriteTimeout(1, TimeUnit.SECONDS);
     }
 
-    Marker startLocation;
+    Marker targetLocation;
 
-    /*
-    * Addint the start and end
-    * */
-    private void addStartEndMarkersToMap(DirectionsResult results, GoogleMap mMap) {
+    private void addEndMarkerToMap(DirectionsResult results, GoogleMap mMap) {
 
-        startLocation = mMap.addMarker(new MarkerOptions().position(new LatLng(results.routes[0].legs[0]
-                .startLocation.lat,results.routes[0].legs[0].startLocation.lng)).title(results
-                .routes[0].legs[0].startAddress).icon(BitmapDescriptorFactory.defaultMarker(160)));
-
-        mMap.addMarker(new MarkerOptions().position(new LatLng(results.routes[0].legs[0].endLocation
-                .lat,results.routes[0].legs[0].endLocation.lng)).title(results.routes[0].legs[0]
+        targetLocation = mMap.addMarker(new MarkerOptions().position(new LatLng(results.routes[0].legs[0].endLocation
+                .lat, results.routes[0].legs[0].endLocation.lng)).title(results.routes[0].legs[0]
                 .startAddress).snippet(getEndLocationTitle(results)));
 
         mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener(){
             @Override
             public boolean onMarkerClick(Marker marker){
                 Log.d("onMarkerClick", "before equal reached");
-                if (marker.equals(startLocation)){
+                if (marker.equals(targetLocation)){
                     findNearbyPlaces();
                 }
                 Log.d("onMarkerClick", "after equal reached");
@@ -305,29 +356,22 @@ public class SitePageActivity extends BaseActivity
         });
     }
 
-//    /**Test for finding nearby locations **/
-//    @Override
-//    public boolean onMarkerClick(final Marker marker){
-//        if (marker.equals(startLocation)){
-//            findNearbyPlaces();
-//        }
-//        return true;
+//    private String getEndLocationTitle(DirectionsResult results) {
+//        return "Time :" + results.routes[0].legs[0].duration.humanReadable;
 //    }
-
-    private String getEndLocationTitle(DirectionsResult results){
-        return  "Time :"+ results.routes[0].legs[0].duration.humanReadable
+    private String getEndLocationTitle(DirectionsResult results) {
+        return "Time :" + results.routes[0].legs[0].duration.humanReadable
                 + " Distance :" + results.routes[0].legs[0].distance.humanReadable;
     }
 
     public void findNearbyPlaces() {
         StringBuilder sbValue = new StringBuilder(sbMethod());
-        PlacesTask placesTask = new PlacesTask();
+        PlacesTask placesTask = new PlacesTask(getApplicationContext());
         placesTask.execute(sbValue.toString());
     }
 
     // -- Places --
     public StringBuilder sbMethod() {
-
 
         StringBuilder sb = new StringBuilder("https://maps.googleapis.com/maps/api/place/nearbysearch/json?");
         sb.append("location=" + latitude + "," + longitude);
@@ -335,31 +379,9 @@ public class SitePageActivity extends BaseActivity
         sb.append("&types=" + "restaurant");
         sb.append("&sensor=true");
         sb.append("&key=" + "AIzaSyC0jBiaFqbQytOt_KPExxKL8GRrEYiQgJY");
-
-
         Log.d("Map", "api: " + sb.toString());
 
         return sb;
-    }
-
-    @Override
-    public void onLocationChanged(Location location) {
-
-    }
-
-    @Override
-    public void onStatusChanged(String provider, int status, Bundle extras) {
-
-    }
-
-    @Override
-    public void onProviderEnabled(String provider) {
-
-    }
-
-    @Override
-    public void onProviderDisabled(String provider) {
-
     }
 
     @Override
@@ -367,9 +389,27 @@ public class SitePageActivity extends BaseActivity
 
     }
 
+    @Override
+    public boolean onMyLocationButtonClick() {
+        mFollowUser = true;
+        return false;
+    }
+
+    @Override
+    public void onLocationChanged(Location location) {
+        if (mFollowUser) {
+            mGoogleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 13.0f));
+        }
+    }
+
     private class PlacesTask extends AsyncTask<String, Integer, String> {
 
         String data = null;
+        Context mContext;
+
+        public PlacesTask(Context context) {
+            mContext = context;
+        }
 
         // Invoked by execute() method of this object
         @Override
@@ -385,6 +425,7 @@ public class SitePageActivity extends BaseActivity
         // Executed after the complete execution of doInBackground() method
         @Override
         protected void onPostExecute(String result) {
+            //ParserTask parserTask = new ParserTask(mContext);
             ParserTask parserTask = new ParserTask();
 
             // Start parsing the Google places in JSON format
@@ -434,6 +475,11 @@ public class SitePageActivity extends BaseActivity
     private class ParserTask extends AsyncTask<String, Integer, List<HashMap<String, String>>> {
 
         JSONObject jObject;
+        Context mContext;
+//
+//        public ParserTask(Context context) {
+//            mContext = context;
+//        }
 
         // Invoked by execute() method of this object
         @Override
@@ -442,10 +488,12 @@ public class SitePageActivity extends BaseActivity
             List<HashMap<String, String>> places = null;
             Place placeJson = new Place();
             placeJson.setCurrentLatLng(new com.google.maps.model.LatLng(latitude, longitude));
+            //PlacesJSONTask placesJSONTaskJson = new PlacesJSONTask();
 
             try {
                 jObject = new JSONObject(jsonData[0]);
 
+                //places = placesJSONTaskJson.parse(jObject);
                 places = placeJson.parse(jObject);
 
             } catch (Exception e) {
@@ -458,9 +506,10 @@ public class SitePageActivity extends BaseActivity
         @Override
         protected void onPostExecute(List<HashMap<String, String>> list) {
 
+            ArrayList<Place> businesses = new ArrayList<>();
             Log.d("Map", "list size: " + list.size());
             // Clears all the existing markers;
-            mGoogleMap.clear();
+            // mGoogleMap.clear();
 
             for (int i = 0; i<list.size(); i++){
                 Log.d("unsorted", ""+list.get(i).get("distance") + " " + list.get(i).get("place_name"));
@@ -480,12 +529,13 @@ public class SitePageActivity extends BaseActivity
 
             for (int i = 0; i < listSize; i++) {
 
+                Place place = new Place();
+
                 // Creating a marker
                 MarkerOptions markerOptions = new MarkerOptions();
 
                 // Getting a place from the places list
                 HashMap<String, String> hmPlace = list.get(i);
-
 
                 // Getting latitude of the place
                 double lat = Double.parseDouble(hmPlace.get("lat"));
@@ -494,27 +544,34 @@ public class SitePageActivity extends BaseActivity
                 double lng = Double.parseDouble(hmPlace.get("lng"));
 
                 // Getting name
-                String name = hmPlace.get("place_name");
-
-                Log.d("Map", "place: " + name);
-
-                // Getting vicinity
-                String vicinity = hmPlace.get("vicinity");
+                place.setName(hmPlace.get("place_name"));
+                place.setVicinity(hmPlace.get("vicinity"));
+                place.setRating(hmPlace.get("rating"));
 
                 LatLng latLng = new LatLng(lat, lng);
-
                 // Setting the position for the marker
                 markerOptions.position(latLng);
-
-                markerOptions.title(name + " : " + vicinity);
 
                 //markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA));
                 markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.restaurant_71));
 
+                markerOptions.title(hmPlace.get("place_name") + " : " + hmPlace.get("vicinity"));
+                markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA));
                 // Placing a marker on the touched position
                 Marker m = mGoogleMap.addMarker(markerOptions);
 
+                businesses.add(place);
+
             }
+
+            HorizontalCardViewAdapter cardViewAdapter = new HorizontalCardViewAdapter(businesses);
+            LinearLayoutManager horizontalLayoutManagaer
+                    = new LinearLayoutManager(SitePageActivity.this, LinearLayoutManager.HORIZONTAL, false);
+            mHorizontalLayoutView = (RecyclerView) findViewById(R.id.recycler_view);
+            // mHorizontalLayoutView.setHasFixedSize(true); TODO: Better performance
+            mHorizontalLayoutView.setLayoutManager(horizontalLayoutManagaer);
+            mHorizontalLayoutView.setAdapter(cardViewAdapter);
+
         }
     }
 
@@ -564,6 +621,32 @@ public class SitePageActivity extends BaseActivity
     @Override
     public int getLayout() {
         return R.layout.activity_site_page;
+    }
+
+    /*
+    * Location listener.  Represented by the blue dot on the map.
+    * */
+    public class BlueDotWalker implements LocationListener {
+
+        @Override
+        public void onLocationChanged(Location location) {
+
+        }
+
+        @Override
+        public void onStatusChanged(String provider, int status, Bundle extras) {
+
+        }
+
+        @Override
+        public void onProviderEnabled(String provider) {
+
+        }
+
+        @Override
+        public void onProviderDisabled(String provider) {
+
+        }
     }
 }
 

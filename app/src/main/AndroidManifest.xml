@@ -16,15 +16,16 @@
     <uses-feature
         android:glEsVersion="0x00020000"
         android:required="true" />
-    <!-- NEED TO GET RID OF THIS DURING PRODUCTION -->
 
+    <!-- NEED TO GET RID OF THIS DURING PRODUCTION -->
     <application
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@mipmap/ic_launcher_new"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
+        android:roundIcon="@mipmap/ic_launcher_new_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+
         <!-- android:debuggable="true"> -->
         <!-- NEED TO GET RID OF THIS DURING PRODUCTION -->
 
@@ -40,21 +41,20 @@
         <!-- Activities -->
         <activity
             android:name=".main.MainActivity"
-            android:label="@string/title_activity_main"
+            android:label="@string/app_name"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar">
-            <intent-filter>
+            <intent-filter android:label="@string/app_name">
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity
             android:name=".maps.MapsActivity"
             android:label="@string/title_activity_maps"
-            android:screenOrientation="portrait"
-            android:launchMode="singleTask"/>
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait" />
         <activity android:name=".main.BaseActivity" />
         <activity
             android:name=".maps.SitePageActivity"
@@ -85,8 +85,8 @@
             android:label="@string/title_activity_achievements"
             android:theme="@style/AppTheme" />
         <activity
-            android:name=".main.NavigationActivity"
-            android:label="@string/title_activity_navigation"
+            android:name=".main.SiteListActivity"
+            android:label="@string/title_activity_site_list"
             android:theme="@style/AppTheme"/>
     </application>
 

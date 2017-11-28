@@ -1,42 +1,237 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="heritagewalk.com.heritagewalk.main.MainActivity"
-    tools:showIn="@layout/app_bar_main">
+    tools:showIn="@layout/app_bar_main"
+    android:background="@drawable/bg_blur_34">
 
-    <Button
-        android:id="@+id/maps_button"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:text="@string/button_open_map"/>
+        android:orientation="vertical">
 
-    <Button
-        android:id="@+id/logout_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:text="Logout"
-        android:layout_below="@+id/maps_button"/>
+        <LinearLayout
+            android:id="@+id/welcome_banner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="-15dp"
+            android:orientation="vertical">
 
-    <Button
-        android:id="@+id/achievement_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:text="Give Achievement"
-        android:layout_below="@+id/logout_button"/>
+            <LinearLayout
+                android:id="@+id/banner"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_gravity="center_horizontal"
+                android:paddingTop="15dp"
+                >
 
-    <Button
-        android:id="@+id/achievement_page_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:text="View Achievements"
-        android:layout_below="@+id/achievement_button"/>
+                <TextView
+                    android:id="@+id/header"
+                    style="@style/SitePageHeader"
+                    android:layout_marginBottom="-5dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/welcome_to_heritage_walk"
+                    android:textSize="28sp"/>
+
+                <TextView
+                    android:id="@+id/sub_header"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/sub_header"
+                    android:textAlignment="center"
+                    android:layout_gravity="center_horizontal"/>
+
+            </LinearLayout>
+
+                <!-- Welcome to Heritage Walk -->
+                <RelativeLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:padding="5dp">
+
+                    <android.support.v7.widget.CardView
+                        android:id="@+id/info"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:cardBackgroundColor="@color/colorPrimary"
+                        card_view:cardCornerRadius="4dp"
+                        app:cardElevation="4dp"
+                        app:cardUseCompatPadding="true"
+                        android:layout_marginTop="10dp">
+
+                        <!-- Welcome to Heritage Walk -->
+                        <RelativeLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:paddingLeft="10dp"
+                            android:paddingRight="10dp"
+                            android:paddingBottom="10dp">
+
+                            <TextView
+                                android:id="@+id/info_header"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_centerHorizontal="false"
+                                android:layout_marginTop="5dp"
+                                android:text="@string/info_header"
+                                android:textColor="@color/white"
+                                android:textSize="18sp"
+                                android:textStyle="bold"
+                                />
+
+                            <TextView
+                                android:id="@+id/info_text"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_centerHorizontal="true"
+                                android:layout_marginTop="5dp"
+                                android:text="@string/app_description"
+                                android:textSize="16sp"
+                                android:layout_below="@id/info_header"
+                                />
+
+                            <TextView
+                                android:id="@+id/info_text_2"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_centerHorizontal="true"
+                                android:layout_marginTop="5dp"
+                                android:text="@string/app_call_to_action"
+                                android:textSize="16sp"
+                                android:layout_below="@+id/info_text"
+                                />
+
+                            <TextView
+                                android:id="@+id/info_text_3"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_centerHorizontal="false"
+                                android:layout_marginTop="5dp"
+                                android:text="@string/app_call_to_action_2"
+                                android:textSize="16sp"
+                                android:layout_below="@+id/info_text_2"
+                                android:textStyle="italic"
+                                />
+
+                        </RelativeLayout>
+
+                    </android.support.v7.widget.CardView>
+
+                </RelativeLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/progress_search"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/welcome_banner"
+            android:layout_centerHorizontal="true"
+            android:orientation="horizontal"
+            android:weightSum="2">
+
+            <android.support.v7.widget.CardView xmlns:card_view="http://schemas.android.com/apk/res-auto"
+                android:id="@+id/progress_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                app:cardBackgroundColor="@color/MaroonRed"
+                card_view:cardCornerRadius="4dp"
+                card_view:cardElevation="7dp"
+                card_view:cardUseCompatPadding="true">
+
+                <!-- Welcome to Heritage Walk -->
+                <RelativeLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:padding="10dp">
+
+                    <!-- Achievements -->
+                    <ImageView
+                        android:id="@+id/achievements"
+                        android:layout_width="60dp"
+                        android:layout_height="60dp"
+                        android:layout_centerHorizontal="true"
+                        android:src="@drawable/ic_star_svg" />
+
+                    <TextView
+                        android:id="@+id/achievements_tile"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/achievements"
+
+                        android:text="Track Your Progress" />
+
+                </RelativeLayout>
+
+            </android.support.v7.widget.CardView>
+
+            <android.support.v7.widget.CardView xmlns:card_view="http://schemas.android.com/apk/res-auto"
+                android:id="@+id/search_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                app:cardBackgroundColor="@color/colorPrimaryDark"
+                card_view:cardCornerRadius="4dp"
+                card_view:cardElevation="7dp"
+                card_view:cardUseCompatPadding="true">
+
+                <!-- Welcome to Heritage Walk -->
+                <RelativeLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:padding="10dp">
+
+                    <ImageView
+                        android:id="@+id/search"
+                        android:layout_width="60dp"
+                        android:layout_height="60dp"
+                        android:layout_centerHorizontal="true"
+                        android:src="@drawable/ic_search" />
+
+                    <TextView
+                        android:id="@+id/search_title"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/search"
+                        android:text="@string/find_a_heritage_site" />
+
+                </RelativeLayout>
+
+            </android.support.v7.widget.CardView>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/explore"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/progress_search"
+            android:paddingLeft="7dp"
+            android:paddingRight="7dp">
+
+            <Button
+                android:id="@+id/explore_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/button_register"
+                android:elevation="20dp"
+                android:shadowColor="@color/colorLightGray"
+                android:text="Explore New West"
+                android:textSize="14sp" />
+
+        </LinearLayout>
+
+    </LinearLayout>
 
 </RelativeLayout>

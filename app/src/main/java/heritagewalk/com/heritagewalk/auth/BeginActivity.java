@@ -28,7 +28,6 @@ public class BeginActivity extends AppCompatActivity {
     private static final String TAG = "BeginActivity";
     private FirebaseDatabase database;
     private DatabaseReference myRef;
-    private TextView name;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,7 +39,6 @@ public class BeginActivity extends AppCompatActivity {
         Button mBegin = (Button) findViewById(R.id.button_begin);
 
         final Intent mapsActivity = new Intent(this, MainActivity.class);
-        name = (TextView) findViewById(R.id.user_name);
         TextView greeting = (TextView) findViewById(R.id.greeting);
         database = FirebaseDatabase.getInstance();
         myRef = database.getReference();
@@ -55,20 +53,6 @@ public class BeginActivity extends AppCompatActivity {
             greeting.setText(getString(R.string.good_evening_text));
         }
 
-        myRef.addValueEventListener(new ValueEventListener() {
-            @SuppressWarnings("ConstantConditions")
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-//                String[] fullname = dataSnapshot.child("Users").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("Name").getValue().toString().split(" ");
-//                String setName = fullname[0].substring(0, 1).toUpperCase() + fullname[0].substring(1);
-//                name.setText(setName);
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
         mBegin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

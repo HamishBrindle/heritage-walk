@@ -1,13 +1,16 @@
 package heritagewalk.com.heritagewalk.maps;
 
 import android.Manifest;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
+import android.view.ContextThemeWrapper;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -15,6 +18,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.Marker;
 import com.google.maps.android.clustering.Cluster;
 import com.google.maps.android.clustering.ClusterManager;
@@ -37,7 +41,7 @@ public class MapsActivity extends BaseActivity
         ClusterManager.OnClusterItemInfoWindowClickListener<Site>,
         Serializable {
     private static final String TAG = "MapsActivity";
-    private static final float DEFAULT_ZOOM = 12.0f;
+    private static final float DEFAULT_ZOOM = 14.0f;
     private static final float MIN_ZOOM = 10.0f;
     private static final float MAX_ZOOM = 18.0f;
     private static final LatLng NEW_WEST = new LatLng(49.2057179, -122.910956);
@@ -77,6 +81,12 @@ public class MapsActivity extends BaseActivity
     @Override
     public void onMapReady(GoogleMap map) {
         mMap = map;
+
+        mMap.setPadding(0,200,0,0);
+        mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+        mMap.setMapStyle(
+                MapStyleOptions.loadRawResourceStyle(
+                        this, R.raw.map_style));
 
         // Do all the map setup (Camera, permissions, etc.)
         setUpMap();
@@ -172,18 +182,6 @@ public class MapsActivity extends BaseActivity
         mMap.setOnMarkerClickListener(mClusterManager);
         mMap.setInfoWindowAdapter(mClusterManager.getMarkerManager());
         mMap.setOnInfoWindowClickListener(mClusterManager);
-//        mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
-//            @Override
-//            public void onInfoWindowClick(Marker marker) {
-//                Log.d("newTag", marker.getTitle());
-//                for (Site site : mHeritageSites) {
-//                    if (marker.getTitle().equals(site.getName())) {
-//                    }
-//                }
-//                Toast.makeText(MapsActivity.this, "Info Window", Toast.LENGTH_SHORT).show();
-//            }
-//        });
-
 
         mClusterManager.setOnClusterClickListener(this);
         mClusterManager.setOnClusterInfoWindowClickListener(this);
@@ -215,7 +213,6 @@ public class MapsActivity extends BaseActivity
     * in the SitePageActivity
     */
     private void startNewSiteActivity(Site newSite) {
-        Toast.makeText(this, "startNewSiteActivity Selected", Toast.LENGTH_SHORT).show();
         Intent intent = new Intent(MapsActivity.this, SitePageActivity.class);
         intent.putExtra("selectedSiteName", newSite.getName());
         intent.putExtra("selectedSiteDesc", newSite.getDescription());
@@ -227,7 +224,6 @@ public class MapsActivity extends BaseActivity
 
     @Override
     public boolean onClusterItemClick(Site site) {
-        Toast.makeText(this, "Cluster CLick", Toast.LENGTH_SHORT).show();
         return false;
     }
 
@@ -242,7 +238,7 @@ public class MapsActivity extends BaseActivity
 
     @Override
     public void onClusterItemInfoWindowClick(Site site) {
-        startNewSiteActivity(site);
+        plotMarkerConfirmation(site);
     }
 
     @Override
@@ -253,5 +249,32 @@ public class MapsActivity extends BaseActivity
     @Override
     public void selectCurrentIcon(int id) {
         // super.selectCurrentIcon(id);
+    }
+
+    /**
+     * Confirm with user if they'd like to plot their location and route to selected site.
+     * @param site  The user's selected site.
+     */
+    public void plotMarkerConfirmation(final Site site) {
+
+        AlertDialog.Builder alert = new AlertDialog.Builder(new ContextThemeWrapper(this, R.style.MyDialog));
+        alert.setTitle("Go For A Walk?");
+        alert.setMessage("Would like you like to plot a route to " + site.getName() + "?");
+        alert.setIcon(R.drawable.ic_logo_crown);
+        alert.setPositiveButton("Sure", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                // User confirms
+                startNewSiteActivity(site);
+            }
+        });
+        alert.setNegativeButton("No Thanks", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                // User denies
+                dialog.dismiss();
+            }
+        });
+        alert.show();
     }
 }
