@@ -7,8 +7,39 @@
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="heritagewalk.com.heritagewalk.game.AchievementsActivity"
-    tools:showIn="@layout/app_bar_achievements">
+    tools:showIn="@layout/app_bar_achievements"
+    android:padding="10dp"
+    android:background="@drawable/bg_blur_34">
 
+    <TextView
+        android:id="@+id/achievements_page_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:gravity="center"
+        android:text="@string/achievements_title"
+        android:textSize="25sp"
+        android:paddingBottom="10dp"
+        android:textColor="@color/white"
+        android:textStyle="bold"/>
 
+    <android.support.v7.widget.RecyclerView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/achievements_rv"
+        android:layout_below="@id/achievements_page_title"
+        android:alpha="0.5"
+        android:requiresFadingEdge="vertical"
+        android:fadingEdge="vertical"
+        android:fadingEdgeLength="25dp"
+        android:layout_above="@+id/bottom"
+        />
+
+    <View
+        android:id="@+id/bottom"
+        android:layout_width="match_parent"
+        android:layout_height="55dp"
+        android:layout_alignParentBottom="true"/>
 
 </RelativeLayout>

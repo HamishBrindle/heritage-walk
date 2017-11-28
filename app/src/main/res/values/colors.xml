@@ -2,7 +2,7 @@
 <resources>
     <color name="colorPrimary">@color/blue</color>
     <color name="colorPrimaryDark">@color/gold</color>
-    <color name="colorAccent">@color/light_cyan</color>
+    <color name="colorAccent">@color/light_blue</color>
 
     <color name="grey_100">#F5F5F5</color>
     <color name="grey_300">#E0E0E0</color>
@@ -30,7 +30,7 @@
     <color name="blue">#425E92</color>
     <color name="light_blue">#0C81F6</color>
     <color name="gold">#9B784E</color>
-    <color name="light_cyan">#5FE1D9</color>
+    <color name="light_cyan">#33E1a9</color>
     <color name="off_white">#F7FAD1</color>
     <color name="white">#FFF</color>
 
