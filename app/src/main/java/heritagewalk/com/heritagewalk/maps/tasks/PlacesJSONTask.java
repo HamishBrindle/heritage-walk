@@ -26,12 +26,12 @@ public class PlacesJSONTask {
 
         JSONArray jPlaces = null;
         try {
-            /** Retrieves all the elements in the 'places' array */
+            /* Retrieves all the elements in the 'places' array */
             jPlaces = jObject.getJSONArray("results");
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        /** Invoking getPlaces with the array of json object
+        /* Invoking getPlaces with the array of json object
          * where each json object represent a place
          */
         return getPlaces(jPlaces);
@@ -42,10 +42,10 @@ public class PlacesJSONTask {
         List<HashMap<String, String>> placesList = new ArrayList<HashMap<String, String>>();
         HashMap<String, String> place = null;
 
-        /** Taking each place, parses and adds to list object */
+        /* Taking each place, parses and adds to list object */
         for (int i = 0; i < placesCount; i++) {
             try {
-                /** Call getPlace with place JSON object to parse the place */
+                /* Call getPlace with place JSON object to parse the place */
                 place = getPlace((JSONObject) jPlaces.get(i));
                 placesList.add(place);
             } catch (JSONException e) {
@@ -64,8 +64,7 @@ public class PlacesJSONTask {
         String placeName = "-NA-";
         String vicinity = "-NA-";
         String rating = "-NA-";
-        String phoneNumber = "[Phone-number Unavailable]";
-        String website = "-NA-";
+        String placeId = "-NA-";
 
         String latitude = "";
         String longitude = "";
@@ -87,6 +86,12 @@ public class PlacesJSONTask {
                 vicinity = jPlace.getString("vicinity");
             }
 
+            if (!jPlace.isNull("place_id")) {
+                placeId = jPlace.getString("place_id");
+            } else {
+                Log.e(TAG, "getPlace: Unable to get place ID");
+            }
+
             latitude = jPlace.getJSONObject("geometry").getJSONObject("location").getString("lat");
             longitude = jPlace.getJSONObject("geometry").getJSONObject("location").getString("lng");
             reference = jPlace.getString("reference");
@@ -94,6 +99,7 @@ public class PlacesJSONTask {
             place.put("place_name", placeName);
             place.put("vicinity", vicinity);
             place.put("rating", rating);
+            place.put("place_id", placeId);
 
             place.put("lat", latitude);
             place.put("lng", longitude);

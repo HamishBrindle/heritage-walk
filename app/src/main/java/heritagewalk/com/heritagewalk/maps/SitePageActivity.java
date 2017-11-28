@@ -26,6 +26,7 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.places.Places;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.LocationSource;
@@ -512,11 +513,12 @@ public class SitePageActivity extends BaseActivity
                 place.setName(hmPlace.get("place_name"));
                 place.setVicinity(hmPlace.get("vicinity"));
                 place.setRating(hmPlace.get("rating"));
+                place.setPlaceId(hmPlace.get("place_id"));
 
                 LatLng latLng = new LatLng(lat, lng);
                 // Setting the position for the marker
                 markerOptions.position(latLng);
-                markerOptions.title(place.getName() + " : " + place.getVicinity());
+                markerOptions.title(place.getName() + ": " + place.getVicinity());
                 markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA));
                 // Placing a marker on the touched position
                 Marker m = mGoogleMap.addMarker(markerOptions);
@@ -525,7 +527,7 @@ public class SitePageActivity extends BaseActivity
 
             }
 
-            HorizontalCardViewAdapter cardViewAdapter = new HorizontalCardViewAdapter(businesses);
+            HorizontalCardViewAdapter cardViewAdapter = new HorizontalCardViewAdapter(businesses, Places.getGeoDataClient(SitePageActivity.this, null));
             LinearLayoutManager horizontalLayoutManagaer
                     = new LinearLayoutManager(SitePageActivity.this, LinearLayoutManager.HORIZONTAL, false);
             mHorizontalLayoutView = (RecyclerView) findViewById(R.id.recycler_view);
