@@ -286,7 +286,7 @@ public class SitePageActivity extends BaseActivity
 
         startLocation = mMap.addMarker(new MarkerOptions().position(new LatLng(results.routes[0].legs[0]
                 .startLocation.lat,results.routes[0].legs[0].startLocation.lng)).title(results
-                .routes[0].legs[0].startAddress).icon(BitmapDescriptorFactory.defaultMarker(120)));
+                .routes[0].legs[0].startAddress).icon(BitmapDescriptorFactory.defaultMarker(160)));
 
         mMap.addMarker(new MarkerOptions().position(new LatLng(results.routes[0].legs[0].endLocation
                 .lat,results.routes[0].legs[0].endLocation.lng)).title(results.routes[0].legs[0]
@@ -508,7 +508,8 @@ public class SitePageActivity extends BaseActivity
 
                 markerOptions.title(name + " : " + vicinity);
 
-                markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA));
+                //markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA));
+                markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.restaurant_71));
 
                 // Placing a marker on the touched position
                 Marker m = mGoogleMap.addMarker(markerOptions);

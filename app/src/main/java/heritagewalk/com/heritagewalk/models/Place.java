@@ -1,5 +1,7 @@
 package heritagewalk.com.heritagewalk.models;
 
+import android.graphics.drawable.Icon;
+
 import com.google.maps.model.LatLng;
 
 import org.json.JSONArray;
@@ -71,6 +73,7 @@ public class Place {
         String latitude = "";
         String longitude = "";
         String reference = "";
+        String iconRef = "";
 
         try {
             // Extracting Place name, if available
@@ -86,12 +89,15 @@ public class Place {
             latitude = jPlace.getJSONObject("geometry").getJSONObject("location").getString("lat");
             longitude = jPlace.getJSONObject("geometry").getJSONObject("location").getString("lng");
             reference = jPlace.getString("reference");
+            //iconRef = jPlace.getString("icon"); Use for dynamic icons
+            iconRef = "https://maps.gstatic.com/mapfiles/place_api/icons/shopping-71.png";
 
             place.put("place_name", placeName);
             place.put("vicinity", vicinity);
             place.put("lat", latitude);
             place.put("lng", longitude);
             place.put("reference", reference);
+            place.put("icon", iconRef);
 
             double distance = haversine(Double.parseDouble(currentLat), Double.parseDouble(currentLng), Double.parseDouble(latitude), Double.parseDouble(longitude));
             place.put("distance", Double.toString(distance));
