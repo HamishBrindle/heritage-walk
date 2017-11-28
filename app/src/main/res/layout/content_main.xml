@@ -19,60 +19,53 @@
             android:id="@+id/welcome_banner"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
             android:layout_marginBottom="-15dp"
             android:orientation="vertical">
 
-            <android.support.v7.widget.CardView
-                android:id="@+id/welcome"
-                android:layout_width="match_parent"
+            <LinearLayout
+                android:id="@+id/banner"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:cardBackgroundColor="@color/colorPrimary"
-                card_view:cardCornerRadius="4dp"
-                card_view:cardElevation="7dp"
-                card_view:cardUseCompatPadding="true">
+                android:orientation="vertical"
+                android:layout_gravity="center_horizontal"
+                android:paddingTop="15dp"
+                >
+
+                <TextView
+                    android:id="@+id/header"
+                    style="@style/SitePageHeader"
+                    android:layout_marginBottom="-5dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/welcome_to_heritage_walk"
+                    android:textSize="28sp"/>
+
+                <TextView
+                    android:id="@+id/sub_header"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/sub_header"
+                    android:textAlignment="center"
+                    android:layout_gravity="center_horizontal"/>
+
+            </LinearLayout>
 
                 <!-- Welcome to Heritage Walk -->
                 <RelativeLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
-                    android:padding="20dp">
-
-                    <LinearLayout
-                        android:id="@+id/banner"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:layout_alignParentTop="true">
-
-                        <TextView
-                            android:id="@+id/header"
-                            style="@style/SitePageHeader"
-                            android:layout_marginBottom="-5dp"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/welcome_to_heritage_walk" />
-
-                        <TextView
-                            android:id="@+id/sub_header"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/sub_header"
-                            android:textAlignment="center" />
-
-                    </LinearLayout>
+                    android:padding="5dp">
 
                     <android.support.v7.widget.CardView
                         android:id="@+id/info"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        app:cardBackgroundColor="@color/colorLightGray"
+                        app:cardBackgroundColor="@color/colorPrimary"
                         card_view:cardCornerRadius="4dp"
                         app:cardElevation="4dp"
                         app:cardUseCompatPadding="true"
-                        android:layout_marginTop="10dp"
-                        android:layout_below="@id/banner">
+                        android:layout_marginTop="10dp">
 
                         <!-- Welcome to Heritage Walk -->
                         <RelativeLayout
@@ -133,8 +126,6 @@
                     </android.support.v7.widget.CardView>
 
                 </RelativeLayout>
-
-            </android.support.v7.widget.CardView>
 
         </LinearLayout>
 
