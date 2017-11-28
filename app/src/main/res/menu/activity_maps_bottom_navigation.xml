@@ -27,7 +27,7 @@
     <item
         android:id="@+id/action_achievements"
         android:enabled="true"
-        android:icon="@drawable/ic_achievements"
+        android:icon="@drawable/ic_star"
         android:title="@string/achievements"
         app:showAsAction="always" />
 

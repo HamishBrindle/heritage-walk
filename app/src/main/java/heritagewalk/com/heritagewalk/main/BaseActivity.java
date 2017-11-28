@@ -14,6 +14,7 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
@@ -22,12 +23,10 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 import heritagewalk.com.heritagewalk.R;
-import heritagewalk.com.heritagewalk.auth.LoginActivity;
 import heritagewalk.com.heritagewalk.auth.LoginRegisterActivity;
 import heritagewalk.com.heritagewalk.exception.ResourceNotFoundException;
 import heritagewalk.com.heritagewalk.game.AchievementsActivity;
 import heritagewalk.com.heritagewalk.maps.MapsActivity;
-import heritagewalk.com.heritagewalk.maps.SitePageActivity;
 import heritagewalk.com.heritagewalk.utility.BottomNavigationViewHelper;
 
 public class BaseActivity extends AppCompatActivity
@@ -213,6 +212,8 @@ public class BaseActivity extends AppCompatActivity
             startActivity(intent);
         } else if (id == R.id.nav_sites) {
             intent = new Intent(getApplicationContext(), SiteListActivity.class);
+            Log.d("hello", "intent u there?");
+
             startActivity(intent);
         } else if (id == R.id.nav_achievements) {
             intent = new Intent(getApplicationContext(), AchievementsActivity.class);
@@ -233,7 +234,8 @@ public class BaseActivity extends AppCompatActivity
             intent = new Intent(getApplicationContext(), SiteListActivity.class);
             startActivity(intent);
         } else if (id == R.id.action_achievements) {
-            // Achievements button
+            intent = new Intent(getApplicationContext(), AchievementsActivity.class);
+            startActivity(intent);
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

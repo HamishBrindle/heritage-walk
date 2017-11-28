@@ -27,7 +27,7 @@
                 android:id="@+id/welcome"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:cardBackgroundColor="@color/colorLightGray"
+                app:cardBackgroundColor="@color/colorPrimary"
                 card_view:cardCornerRadius="4dp"
                 card_view:cardElevation="7dp"
                 card_view:cardUseCompatPadding="true">
@@ -39,24 +39,98 @@
                     android:layout_gravity="center_horizontal"
                     android:padding="20dp">
 
-                    <TextView
-                        android:id="@+id/header"
-                        style="@style/SitePageHeader"
-                        android:layout_width="wrap_content"
+                    <LinearLayout
+                        android:id="@+id/banner"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_centerInParent="true"
-                        android:layout_marginTop="-5dp"
-                        android:text="@string/welcome_to_heritage_walk" />
+                        android:orientation="vertical"
+                        android:layout_alignParentTop="true">
 
-                    <TextView
-                        android:id="@+id/sub_header"
-                        android:layout_width="wrap_content"
+                        <TextView
+                            android:id="@+id/header"
+                            style="@style/SitePageHeader"
+                            android:layout_marginBottom="-5dp"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/welcome_to_heritage_walk" />
+
+                        <TextView
+                            android:id="@+id/sub_header"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/sub_header"
+                            android:textAlignment="center" />
+
+                    </LinearLayout>
+
+                    <android.support.v7.widget.CardView
+                        android:id="@+id/info"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_below="@+id/header"
-                        android:layout_centerHorizontal="true"
-                        android:layout_marginTop="5dp"
-                        android:text="The Magic of Your City's Past Awaits!"
-                        android:textAlignment="center" />
+                        app:cardBackgroundColor="@color/colorLightGray"
+                        card_view:cardCornerRadius="4dp"
+                        app:cardElevation="4dp"
+                        app:cardUseCompatPadding="true"
+                        android:layout_marginTop="10dp"
+                        android:layout_below="@id/banner">
+
+                        <!-- Welcome to Heritage Walk -->
+                        <RelativeLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:paddingLeft="10dp"
+                            android:paddingRight="10dp"
+                            android:paddingBottom="10dp">
+
+                            <TextView
+                                android:id="@+id/info_header"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_centerHorizontal="false"
+                                android:layout_marginTop="5dp"
+                                android:text="@string/info_header"
+                                android:textColor="@color/white"
+                                android:textSize="18sp"
+                                android:textStyle="bold"
+                                />
+
+                            <TextView
+                                android:id="@+id/info_text"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_centerHorizontal="true"
+                                android:layout_marginTop="5dp"
+                                android:text="@string/app_description"
+                                android:textSize="16sp"
+                                android:layout_below="@id/info_header"
+                                />
+
+                            <TextView
+                                android:id="@+id/info_text_2"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_centerHorizontal="true"
+                                android:layout_marginTop="5dp"
+                                android:text="@string/app_call_to_action"
+                                android:textSize="16sp"
+                                android:layout_below="@+id/info_text"
+                                />
+
+                            <TextView
+                                android:id="@+id/info_text_3"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_centerHorizontal="false"
+                                android:layout_marginTop="5dp"
+                                android:text="@string/app_call_to_action_2"
+                                android:textSize="16sp"
+                                android:layout_below="@+id/info_text_2"
+                                android:textStyle="italic"
+                                />
+
+                        </RelativeLayout>
+
+                    </android.support.v7.widget.CardView>
 
                 </RelativeLayout>
 
@@ -96,7 +170,7 @@
                         android:layout_width="60dp"
                         android:layout_height="60dp"
                         android:layout_centerHorizontal="true"
-                        android:src="@drawable/ic_star" />
+                        android:src="@drawable/ic_star_svg" />
 
                     <TextView
                         android:id="@+id/achievements_tile"

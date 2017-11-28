@@ -94,5 +94,26 @@
     <string name="title_activity_site_list">SiteListActivity</string>
     <string name="welcome_to_heritage_walk">Welcome to Heritage Walk</string>
     <string name="find_a_heritage_site">Find a Heritage Site</string>
+    <string name="achievements_title">🏅 Achievements 🏅</string>
+    <string-array name="achievement_array">
+        <item>first site visited</item>
+        <item>Walked 10km</item>
+        <item>5 sites visited</item>
+        <item>10 sites visited</item>
+        <item>Walked 20km</item>
+        <item>25 sites visited</item>
+        <item>50 sites visited</item>
+        <item>Walked New West!</item>
+        <item>All Sites Visited!</item>
+        <item>Refer A Friend</item>
+        <item>Walk With a Friend</item>
+    </string-array>
+    <string name="title_activity_card_view_adapter">ActivityCardViewAdapter</string>
+    <string name="site_list">Site List</string>
+    <string name="sub_header">The Magic of Your City\'s Past Awaits!</string>
+    <string name="app_description">Heritage Walk is an application about touring the beautiful heritage locations that New Westminster has to offer! </string>
+    <string name="app_call_to_action">There\'s so much to do - and so many places to see... so lets begin!</string>
+    <string name="app_call_to_action_2">Where should we go first?</string>
+    <string name="info_header">What is This About?</string>
 
 </resources>

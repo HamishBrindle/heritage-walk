@@ -18,7 +18,7 @@
             android:title="Sites" />
         <item
             android:id="@+id/nav_achievements"
-            android:icon="@drawable/ic_achievements"
+            android:icon="@drawable/ic_star"
             android:title="Achievements" />
     </group>
 
