@@ -1,6 +1,5 @@
 package heritagewalk.com.heritagewalk.models;
 
-
 import com.google.android.gms.maps.model.LatLng;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -17,6 +16,8 @@ import java.util.List;
  * Current implementation finds the nearest restaurants to target
  * location and displays them with custom icons.
  */
+import android.graphics.Bitmap;
+
 public class Place {
 
     private String name;
@@ -28,11 +29,29 @@ public class Place {
     private String targetLat = "";
     private String targetLng = "";
     private LatLng mLatLng;
+    private String placeId;
+    private Bitmap bitmap;
 
     /**
      * Empty constructor.
      */
     public Place() {
+    }
+
+    public Bitmap getBitmap() {
+        return bitmap;
+    }
+
+    public void setBitmap(Bitmap bitmap) {
+        this.bitmap = bitmap;
+    }
+
+    public String getPlaceId() {
+        return placeId;
+    }
+
+    public void setPlaceId(String placeId) {
+        this.placeId = placeId;
     }
 
     public String getWebsite() {
@@ -102,6 +121,7 @@ public class Place {
         String reference = "";
         String iconRef = "";
         String mrating = "";
+        String mPlaceId;
 
         try {
             // Extracting Place name, if available
@@ -121,6 +141,7 @@ public class Place {
             //iconRef = jPlace.getString("icon"); Use for dynamic icons
             iconRef = "https://maps.gstatic.com/mapfiles/place_api/icons/shopping-71.png";
             mrating = jPlace.getString("rating");
+            mPlaceId = jPlace.getString("place_id");
 
             place.put("place_name", placeName);
             place.put("vicinity", vicinity);
@@ -129,6 +150,7 @@ public class Place {
             place.put("reference", reference);
             place.put("icon", iconRef);
             place.put("rating", mrating);
+            place.put("place_id", mPlaceId);
 
             //mLatLng = new LatLng(Double.parseDouble(latitude), Double.parseDouble(longitude));
 
@@ -217,4 +239,7 @@ public class Place {
 
 
 
+    public Bitmap getPhoto() {
+        return bitmap;
+    }
 }

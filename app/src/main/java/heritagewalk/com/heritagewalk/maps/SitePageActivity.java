@@ -27,6 +27,7 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.places.Places;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.LocationSource;
@@ -41,8 +42,8 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.maps.DirectionsApi;
 import com.google.maps.GeoApiContext;
+import com.google.maps.DirectionsApi;
 import com.google.maps.android.PolyUtil;
 import com.google.maps.errors.ApiException;
 import com.google.maps.model.DirectionsResult;
@@ -80,16 +81,12 @@ public class SitePageActivity extends BaseActivity
     public SitePageActivity(){}
 
     private static final String TAG = "SitePageActivity";
-    private String sitePosition;
     private String siteName;
     private String siteSummary;
     private final LatLng centerOfNewWest = new LatLng(49.2057, -122.9110);
     private FusedLocationProviderClient mFusedLocationClient;
     private MockLocationProvider mMockLocationProvider;
-    private LatLng startingLocation;
     private GeoApiContext mGeoApiContext;
-    private OnSuccessListener<Location> mSuccessListener;
-    private LocationRequest mLocationRequest;
     private float mStartingBearing;
 
     private CardView mCardView;
@@ -99,10 +96,7 @@ public class SitePageActivity extends BaseActivity
 
     protected GoogleMap mGoogleMap;
     protected LatLngBounds mLatLngBounds;
-    private RecyclerView mHorizontalLayoutView;
     private boolean mFollowUser;
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -110,7 +104,7 @@ public class SitePageActivity extends BaseActivity
 
         Intent intent = getIntent();
         siteName = intent.getStringExtra("selectedSiteName");
-        sitePosition = intent.getStringExtra("selectedSiteLatLng");
+        String sitePosition = intent.getStringExtra("selectedSiteLatLng");
         siteSummary = intent.getStringExtra("selectedSiteSummary");
         String[] latlong = sitePosition.split(",");
         latitude = convertStringToFloat(latlong[0]);
@@ -219,6 +213,7 @@ public class SitePageActivity extends BaseActivity
         LatLng siteLocation = new LatLng(latitude, longitude);
         LocationManager locMgr = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
 
+        LatLng startingLocation;
         if (DeviceUtility.isEmulator()) {
             //getting users starting position.  Currently it is using the mock location
             startingLocation = new LatLng(mMockLocationProvider.getLocationAt(0).getLatitude(),
@@ -565,9 +560,19 @@ public class SitePageActivity extends BaseActivity
 
                 // Getting name
                 place.setName(hmPlace.get("place_name"));
-                place.setVicinity(hmPlace.get("vicinity"));
+
+                // Format newline at comma separator
+                String address = hmPlace.get("vicinity");
+                int commaIndex = address.indexOf(',');
+                if (commaIndex > 0) {
+                    address = address.substring(0, commaIndex + 1) + "\n" + (address.substring(commaIndex + 2, address.length()));
+                }
+                place.setVicinity(address);
+
                 place.setRating(hmPlace.get("rating"));
                 place.setLatLng(new LatLng(Double.parseDouble(hmPlace.get("lat")), Double.parseDouble(hmPlace.get("lng"))));
+                place.setPlaceId(hmPlace.get("place_id"));
+
 
                 LatLng latLng = new LatLng(lat, lng);
                 // Setting the position for the marker
@@ -586,10 +591,11 @@ public class SitePageActivity extends BaseActivity
 
             }
 
-            HorizontalCardViewAdapter cardViewAdapter = new HorizontalCardViewAdapter(businesses, mGoogleMap);
+            //HorizontalCardViewAdapter cardViewAdapter = new HorizontalCardViewAdapter(businesses, mGoogleMap);
+            HorizontalCardViewAdapter cardViewAdapter = new HorizontalCardViewAdapter(businesses, Places.getGeoDataClient(SitePageActivity.this, null), mGoogleMap);
             LinearLayoutManager horizontalLayoutManagaer
                     = new LinearLayoutManager(SitePageActivity.this, LinearLayoutManager.HORIZONTAL, false);
-            mHorizontalLayoutView = (RecyclerView) findViewById(R.id.recycler_view);
+            RecyclerView mHorizontalLayoutView = (RecyclerView) findViewById(R.id.recycler_view);
             // mHorizontalLayoutView.setHasFixedSize(true); TODO: Better performance
             mHorizontalLayoutView.setLayoutManager(horizontalLayoutManagaer);
             mHorizontalLayoutView.setAdapter(cardViewAdapter);
@@ -636,7 +642,7 @@ public class SitePageActivity extends BaseActivity
     @Override
     public void onConnected(@Nullable Bundle bundle) {
 
-        mSuccessListener = new OnSuccessListener<Location>() {
+        OnSuccessListener<Location> mSuccessListener = new OnSuccessListener<Location>() {
             @Override
             public void onSuccess(Location location) {
                 // Got last known location. In some rare situations this can be null.
@@ -645,7 +651,7 @@ public class SitePageActivity extends BaseActivity
                 }
             }
         };
-        mLocationRequest = new LocationRequest();
+        LocationRequest mLocationRequest = new LocationRequest();
         mLocationRequest.setInterval(1000);
         mLocationRequest.setFastestInterval(1000);
         mLocationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
