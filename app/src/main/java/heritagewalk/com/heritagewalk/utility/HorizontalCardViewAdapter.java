@@ -13,7 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-
+import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.places.GeoDataClient;
 import com.google.android.gms.location.places.PlacePhotoMetadata;
@@ -28,6 +28,7 @@ import com.google.android.gms.tasks.Task;
 import java.util.List;
 
 import heritagewalk.com.heritagewalk.R;
+import heritagewalk.com.heritagewalk.maps.SitePageActivity;
 import heritagewalk.com.heritagewalk.models.Place;
 
 public class HorizontalCardViewAdapter extends RecyclerView.Adapter<HorizontalCardViewAdapter.MyViewHolder> {
@@ -35,6 +36,7 @@ public class HorizontalCardViewAdapter extends RecyclerView.Adapter<HorizontalCa
     private static final String TAG = "HorizontalCardViewAdapter";
     private List<Place> horizontalList;
     private Context mContext;
+    private GoogleMap mGoogleMap;
     private GeoDataClient mGeoDataClient;
     private GoogleApiClient googleApiClient;
 
@@ -62,10 +64,17 @@ public class HorizontalCardViewAdapter extends RecyclerView.Adapter<HorizontalCa
         }
     }
 
-    public HorizontalCardViewAdapter(List<Place> horizontalList, GeoDataClient geo) {
+    public HorizontalCardViewAdapter(List<Place> horizontalList, GoogleMap mMap) {
+        this.horizontalList = horizontalList;
+        this.mGoogleMap = mMap;
+    }
+
+    public HorizontalCardViewAdapter(List<Place> horizontalList, GeoDataClient geo, GoogleMap mMap) {
         this.horizontalList = horizontalList;
         mGeoDataClient = geo;
+        this.mGoogleMap = mMap;
     }
+
 
     @Override
     public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -84,7 +93,8 @@ public class HorizontalCardViewAdapter extends RecyclerView.Adapter<HorizontalCa
         holder.name.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // TODO: Place marker on map and change camera-view to it
+                //OnClick move camera view
+                SitePageActivity.moveToMarker(horizontalList.get(position).getLatLng(), mGoogleMap);
             }
         });
 

@@ -15,6 +15,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -41,8 +42,8 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.maps.DirectionsApi;
 import com.google.maps.GeoApiContext;
+import com.google.maps.DirectionsApi;
 import com.google.maps.android.PolyUtil;
 import com.google.maps.errors.ApiException;
 import com.google.maps.model.DirectionsResult;
@@ -57,6 +58,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -71,33 +74,29 @@ import heritagewalk.com.heritagewalk.utility.DeviceUtility;
 import heritagewalk.com.heritagewalk.utility.HorizontalCardViewAdapter;
 
 public class SitePageActivity extends BaseActivity
-        implements OnMapReadyCallback,
-        GoogleApiClient.ConnectionCallbacks,
+        implements OnMapReadyCallback,GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener,
         GoogleMap.OnMyLocationButtonClickListener, LocationSource.OnLocationChangedListener{
 
+    public SitePageActivity(){}
+
     private static final String TAG = "SitePageActivity";
-    private String sitePosition;
     private String siteName;
     private String siteSummary;
     private final LatLng centerOfNewWest = new LatLng(49.2057, -122.9110);
     private FusedLocationProviderClient mFusedLocationClient;
     private MockLocationProvider mMockLocationProvider;
-    private LatLng startingLocation;
     private GeoApiContext mGeoApiContext;
-    private OnSuccessListener<Location> mSuccessListener;
-    private LocationRequest mLocationRequest;
     private float mStartingBearing;
+
+    private CardView mCardView;
 
     static float latitude;
     static float longitude;
 
     protected GoogleMap mGoogleMap;
     protected LatLngBounds mLatLngBounds;
-    private RecyclerView mHorizontalLayoutView;
     private boolean mFollowUser;
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -105,12 +104,14 @@ public class SitePageActivity extends BaseActivity
 
         Intent intent = getIntent();
         siteName = intent.getStringExtra("selectedSiteName");
-        sitePosition = intent.getStringExtra("selectedSiteLatLng");
+        String sitePosition = intent.getStringExtra("selectedSiteLatLng");
         siteSummary = intent.getStringExtra("selectedSiteSummary");
         String[] latlong = sitePosition.split(",");
         latitude = convertStringToFloat(latlong[0]);
         longitude = convertStringToFloat(latlong[1]);
         mLatLngBounds = new LatLngBounds(new LatLng(latitude, longitude), new LatLng(latitude + 0.0001, longitude + 0.0001));
+        mCardView = findViewById(R.id.card_view);
+
 
         setUpViews();
 
@@ -160,8 +161,7 @@ public class SitePageActivity extends BaseActivity
             // for ActivityCompat#requestPermissions for more details.
             return;
         }
-        locMgr.requestLocationUpdates(
-                LocationManager.NETWORK_PROVIDER, 1000, 1, blueDot);
+        locMgr.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1000, 1, blueDot);
     }
 
     /*
@@ -181,6 +181,13 @@ public class SitePageActivity extends BaseActivity
 
         TextView siteTitleView = findViewById(R.id.siteTitle);
         siteTitleView.setText(siteName);
+        siteTitleView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //Moves camera to target site's location
+                moveToMarker(new LatLng(latitude, longitude), mGoogleMap);
+            }
+        });
 
         TextView siteSummView = findViewById(R.id.siteSummary);
         siteSummView.setText(siteSummary);
@@ -195,10 +202,18 @@ public class SitePageActivity extends BaseActivity
         DirectionsResult directions = null;
         mGoogleMap = googleMap;
 
+//        mCardView.setOnClickListener(new CardView.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                moveToMarker(new LatLng(latitude, longitude), mGoogleMap);
+//            }
+//        });
+
         //Heritage Site location
         LatLng siteLocation = new LatLng(latitude, longitude);
         LocationManager locMgr = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
 
+        LatLng startingLocation;
         if (DeviceUtility.isEmulator()) {
             //getting users starting position.  Currently it is using the mock location
             startingLocation = new LatLng(mMockLocationProvider.getLocationAt(0).getLatitude(),
@@ -294,8 +309,8 @@ public class SitePageActivity extends BaseActivity
         List<LatLng> decodedPath = PolyUtil.decode(results.routes[0].overviewPolyline
                 .getEncodedPath());
         mStartingBearing = getBearing(decodedPath.get(0), decodedPath.get(1));
-        PolylineOptions path = new PolylineOptions().addAll(decodedPath).width(13).
-                color(this.getResources().getColor(R.color.colorPrimary));
+        PolylineOptions path = new PolylineOptions().addAll(decodedPath).width(20).
+                color(this.getResources().getColor(R.color.light_blue));
         mMap.addPolyline(path);
     }
 
@@ -336,18 +351,33 @@ public class SitePageActivity extends BaseActivity
                 .setWriteTimeout(1, TimeUnit.SECONDS);
     }
 
-    /*
-    * Adding the end
-    * */
+    Marker targetLocation;
+
     private void addEndMarkerToMap(DirectionsResult results, GoogleMap mMap) {
-        mMap.addMarker(new MarkerOptions().position(new LatLng(results.routes[0].legs[0].endLocation
+
+        targetLocation = mMap.addMarker(new MarkerOptions().position(new LatLng(results.routes[0].legs[0].endLocation
                 .lat, results.routes[0].legs[0].endLocation.lng)).title(results.routes[0].legs[0]
                 .startAddress).snippet(getEndLocationTitle(results)));
+
+//        mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener(){
+//            @Override
+//            public boolean onMarkerClick(Marker marker){
+//                Log.d("onMarkerClick", "before equal reached");
+//                if (marker.equals(targetLocation)){
+//                    findNearbyPlaces();
+//                }
+//                Log.d("onMarkerClick", "after equal reached");
+//                return true;
+//            }
+//        });
     }
 
+//    private String getEndLocationTitle(DirectionsResult results) {
+//        return "Time :" + results.routes[0].legs[0].duration.humanReadable;
+//    }
     private String getEndLocationTitle(DirectionsResult results) {
-        return "Time :" + results.routes[0].legs[0].duration.humanReadable
-                + " Distance :" + results.routes[0].legs[0].distance.humanReadable;
+        return "Time: " + results.routes[0].legs[0].duration.humanReadable
+                + " | Distance: " + results.routes[0].legs[0].distance.humanReadable;
     }
 
     public void findNearbyPlaces() {
@@ -356,7 +386,11 @@ public class SitePageActivity extends BaseActivity
         placesTask.execute(sbValue.toString());
     }
 
-    // -- Places --
+
+    /**
+     * Builds string to properly call Google Places Webservices with.
+     * @return String sb;
+     */
     public StringBuilder sbMethod() {
 
         StringBuilder sb = new StringBuilder("https://maps.googleapis.com/maps/api/place/nearbysearch/json?");
@@ -411,7 +445,8 @@ public class SitePageActivity extends BaseActivity
         // Executed after the complete execution of doInBackground() method
         @Override
         protected void onPostExecute(String result) {
-            ParserTask parserTask = new ParserTask(mContext);
+            //ParserTask parserTask = new ParserTask(mContext);
+            ParserTask parserTask = new ParserTask();
 
             // Start parsing the Google places in JSON format
             // Invokes the "doInBackground()" method of the class ParserTask
@@ -460,23 +495,21 @@ public class SitePageActivity extends BaseActivity
     private class ParserTask extends AsyncTask<String, Integer, List<HashMap<String, String>>> {
 
         JSONObject jObject;
-        Context mContext;
-
-        public ParserTask(Context context) {
-            mContext = context;
-        }
 
         // Invoked by execute() method of this object
         @Override
         protected List<HashMap<String, String>> doInBackground(String... jsonData) {
 
             List<HashMap<String, String>> places = null;
-            PlacesJSONTask placesJSONTaskJson = new PlacesJSONTask();
+            Place placeJson = new Place();
+            placeJson.setCurrentLatLng(new LatLng(latitude, longitude));
+            //PlacesJSONTask placesJSONTaskJson = new PlacesJSONTask();
 
             try {
                 jObject = new JSONObject(jsonData[0]);
 
-                places = placesJSONTaskJson.parse(jObject);
+                //places = placesJSONTaskJson.parse(jObject);
+                places = placeJson.parse(jObject);
 
             } catch (Exception e) {
                 Log.d("Exception", e.toString());
@@ -493,7 +526,27 @@ public class SitePageActivity extends BaseActivity
             // Clears all the existing markers;
             // mGoogleMap.clear();
 
-            for (int i = 0; i < list.size(); i++) {
+            for (int i = 0; i<list.size(); i++){
+                Log.d("unsorted", ""+list.get(i).get("distance") + " " + list.get(i).get("place_name"));
+                // If place doesn't have the exact number of variables we need, remove it.
+                if (list.get(i).size() != 9){
+                    list.remove(i);
+                }
+            }
+
+            //Sort List by Distance
+            Collections.sort(list, new markerSortByDistance());
+
+            for (int i = 0; i<list.size(); i++){
+                Log.d("sorted", ""+list.get(i).get("distance") + " " + list.get(i).get("place_name"));
+            }
+
+            int listSize = 5;
+            if (list.size() < listSize){
+                listSize = list.size();
+            }
+
+            for (int i = 0; i < listSize; i++) {
 
                 Place place = new Place();
 
@@ -511,15 +564,31 @@ public class SitePageActivity extends BaseActivity
 
                 // Getting name
                 place.setName(hmPlace.get("place_name"));
-                place.setVicinity(hmPlace.get("vicinity"));
+
+                // Format newline at comma separator
+                String address = hmPlace.get("vicinity");
+                int commaIndex = address.indexOf(',');
+                if (commaIndex > 0) {
+                    address = address.substring(0, commaIndex + 1) + "\n" + (address.substring(commaIndex + 2, address.length()));
+                }
+                place.setVicinity(address);
+
                 place.setRating(hmPlace.get("rating"));
+                place.setLatLng(new LatLng(Double.parseDouble(hmPlace.get("lat")), Double.parseDouble(hmPlace.get("lng"))));
                 place.setPlaceId(hmPlace.get("place_id"));
+
 
                 LatLng latLng = new LatLng(lat, lng);
                 // Setting the position for the marker
                 markerOptions.position(latLng);
-                markerOptions.title(place.getName() + ": " + place.getVicinity());
-                markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA));
+
+                // Setting title
+                markerOptions.title(hmPlace.get("place_name"));
+                markerOptions.snippet(hmPlace.get("vicinity"));
+
+                //markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA));
+                markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.restaurant_71l));
+
                 // Placing a marker on the touched position
                 Marker m = mGoogleMap.addMarker(markerOptions);
 
@@ -527,14 +596,49 @@ public class SitePageActivity extends BaseActivity
 
             }
 
-            HorizontalCardViewAdapter cardViewAdapter = new HorizontalCardViewAdapter(businesses, Places.getGeoDataClient(SitePageActivity.this, null));
+            //HorizontalCardViewAdapter cardViewAdapter = new HorizontalCardViewAdapter(businesses, mGoogleMap);
+            HorizontalCardViewAdapter cardViewAdapter = new HorizontalCardViewAdapter(businesses, Places.getGeoDataClient(SitePageActivity.this, null), mGoogleMap);
             LinearLayoutManager horizontalLayoutManagaer
                     = new LinearLayoutManager(SitePageActivity.this, LinearLayoutManager.HORIZONTAL, false);
-            mHorizontalLayoutView = (RecyclerView) findViewById(R.id.recycler_view);
+            RecyclerView mHorizontalLayoutView = (RecyclerView) findViewById(R.id.recycler_view);
             // mHorizontalLayoutView.setHasFixedSize(true); TODO: Better performance
             mHorizontalLayoutView.setLayoutManager(horizontalLayoutManagaer);
             mHorizontalLayoutView.setAdapter(cardViewAdapter);
 
+        }
+    }
+
+    /**
+     * Moves camera to desired lat long position.
+     * @param newPos Target LatLng
+     * @param gMap GoogleMap
+     */
+    static public void moveToMarker(LatLng newPos, GoogleMap gMap){
+
+        CameraPosition startingPositionCamera = CameraPosition.builder().
+                target(newPos).zoom(16).tilt(45).build();
+
+        //Updating camera to the starting position
+        //gMap.moveCamera(CameraUpdateFactory.newCameraPosition(startingPositionCamera));
+        gMap.animateCamera(CameraUpdateFactory.newCameraPosition(startingPositionCamera));
+    }
+
+    /**
+     * Getter for SitePageActivity GoogleMap
+     * @return mGoogleMap GoogleMap
+     */
+    public GoogleMap getGMap(){
+        return mGoogleMap;
+    }
+
+    //Custom Collections Comparator Class to sort Place list by distance to current position
+    private class markerSortByDistance implements Comparator<HashMap<String, String>>{
+        public int compare(HashMap<String, String> a, HashMap<String, String> b){
+            if(Double.parseDouble(a.get("distance")) >= Double.parseDouble(b.get("distance"))) {
+                return 1;
+            } else {
+                return -1;
+            }
         }
     }
 
@@ -544,7 +648,7 @@ public class SitePageActivity extends BaseActivity
     @Override
     public void onConnected(@Nullable Bundle bundle) {
 
-        mSuccessListener = new OnSuccessListener<Location>() {
+        OnSuccessListener<Location> mSuccessListener = new OnSuccessListener<Location>() {
             @Override
             public void onSuccess(Location location) {
                 // Got last known location. In some rare situations this can be null.
@@ -553,7 +657,7 @@ public class SitePageActivity extends BaseActivity
                 }
             }
         };
-        mLocationRequest = new LocationRequest();
+        LocationRequest mLocationRequest = new LocationRequest();
         mLocationRequest.setInterval(1000);
         mLocationRequest.setFastestInterval(1000);
         mLocationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
