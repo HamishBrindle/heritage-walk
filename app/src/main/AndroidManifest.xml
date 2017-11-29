@@ -60,7 +60,6 @@
             android:name=".maps.SitePageActivity"
             android:label="@string/title_activity_site_page"
             android:theme="@style/AppTheme"
-            android:launchMode="singleTask"
             android:screenOrientation="portrait" />
         <activity
             android:name=".auth.LoginActivity"

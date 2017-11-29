@@ -309,7 +309,7 @@ public class SitePageActivity extends BaseActivity
         List<LatLng> decodedPath = PolyUtil.decode(results.routes[0].overviewPolyline
                 .getEncodedPath());
         mStartingBearing = getBearing(decodedPath.get(0), decodedPath.get(1));
-        PolylineOptions path = new PolylineOptions().addAll(decodedPath).width(15).
+        PolylineOptions path = new PolylineOptions().addAll(decodedPath).width(20).
                 color(this.getResources().getColor(R.color.light_blue));
         mMap.addPolyline(path);
     }
@@ -528,6 +528,10 @@ public class SitePageActivity extends BaseActivity
 
             for (int i = 0; i<list.size(); i++){
                 Log.d("unsorted", ""+list.get(i).get("distance") + " " + list.get(i).get("place_name"));
+                // If place doesn't have the exact number of variables we need, remove it.
+                if (list.get(i).size() != 9){
+                    list.remove(i);
+                }
             }
 
             //Sort List by Distance
