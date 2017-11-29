@@ -376,8 +376,8 @@ public class SitePageActivity extends BaseActivity
 //        return "Time :" + results.routes[0].legs[0].duration.humanReadable;
 //    }
     private String getEndLocationTitle(DirectionsResult results) {
-        return "Time :" + results.routes[0].legs[0].duration.humanReadable
-                + " Distance :" + results.routes[0].legs[0].distance.humanReadable;
+        return "Time: " + results.routes[0].legs[0].duration.humanReadable
+                + " | Distance: " + results.routes[0].legs[0].distance.humanReadable;
     }
 
     public void findNearbyPlaces() {
@@ -583,7 +583,8 @@ public class SitePageActivity extends BaseActivity
                 markerOptions.position(latLng);
 
                 // Setting title
-                markerOptions.title(hmPlace.get("place_name") + " : " + hmPlace.get("vicinity"));
+                markerOptions.title(hmPlace.get("place_name"));
+                markerOptions.snippet(hmPlace.get("vicinity"));
 
                 //markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA));
                 markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.restaurant_71l));
