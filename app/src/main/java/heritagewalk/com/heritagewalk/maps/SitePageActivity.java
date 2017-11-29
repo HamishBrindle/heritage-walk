@@ -265,7 +265,7 @@ public class SitePageActivity extends BaseActivity
         //Updating camera to the starting position
         mGoogleMap.moveCamera(CameraUpdateFactory.newCameraPosition(startingPositionCamera));
 
-        //findNearbyPlaces();
+        findNearbyPlaces();
     }
 
 
@@ -309,8 +309,8 @@ public class SitePageActivity extends BaseActivity
         List<LatLng> decodedPath = PolyUtil.decode(results.routes[0].overviewPolyline
                 .getEncodedPath());
         mStartingBearing = getBearing(decodedPath.get(0), decodedPath.get(1));
-        PolylineOptions path = new PolylineOptions().addAll(decodedPath).width(13).
-                color(this.getResources().getColor(R.color.colorPrimary));
+        PolylineOptions path = new PolylineOptions().addAll(decodedPath).width(15).
+                color(this.getResources().getColor(R.color.light_blue));
         mMap.addPolyline(path);
     }
 
@@ -359,17 +359,17 @@ public class SitePageActivity extends BaseActivity
                 .lat, results.routes[0].legs[0].endLocation.lng)).title(results.routes[0].legs[0]
                 .startAddress).snippet(getEndLocationTitle(results)));
 
-        mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener(){
-            @Override
-            public boolean onMarkerClick(Marker marker){
-                Log.d("onMarkerClick", "before equal reached");
-                if (marker.equals(targetLocation)){
-                    findNearbyPlaces();
-                }
-                Log.d("onMarkerClick", "after equal reached");
-                return true;
-            }
-        });
+//        mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener(){
+//            @Override
+//            public boolean onMarkerClick(Marker marker){
+//                Log.d("onMarkerClick", "before equal reached");
+//                if (marker.equals(targetLocation)){
+//                    findNearbyPlaces();
+//                }
+//                Log.d("onMarkerClick", "after equal reached");
+//                return true;
+//            }
+//        });
     }
 
 //    private String getEndLocationTitle(DirectionsResult results) {
@@ -611,10 +611,11 @@ public class SitePageActivity extends BaseActivity
     static public void moveToMarker(LatLng newPos, GoogleMap gMap){
 
         CameraPosition startingPositionCamera = CameraPosition.builder().
-                target(newPos).zoom(17).tilt(45).build();
+                target(newPos).zoom(16).tilt(45).build();
 
         //Updating camera to the starting position
-        gMap.moveCamera(CameraUpdateFactory.newCameraPosition(startingPositionCamera));
+        //gMap.moveCamera(CameraUpdateFactory.newCameraPosition(startingPositionCamera));
+        gMap.animateCamera(CameraUpdateFactory.newCameraPosition(startingPositionCamera));
     }
 
     /**
